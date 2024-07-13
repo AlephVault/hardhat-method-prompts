@@ -7,11 +7,11 @@
  * @param givenOptions The actual options.
  * @param nonInteractive Whether to raise an error when this method is about
  * to become interactive.
- * @returns {Promise<*[]>} Nothing (async function).
+ * @returns {Promise<*>} The processed options as an object (async function).
  */
 async function processTxOptions(hre, optionsSpec, givenOptions, nonInteractive) {
     // TODO
-    return [];
+    return {};
 }
 
 module.exports = {
