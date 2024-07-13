@@ -15,5 +15,5 @@ async function processTxOptions(hre, optionsSpec, givenOptions, nonInteractive) 
 }
 
 module.exports = {
-    processArguments: processTxOptions
+    processTxOptions
 }
