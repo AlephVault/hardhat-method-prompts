@@ -1,34 +1,50 @@
-async function givenOrValidInput(optionKey, given) {
+const argumentSpecs = {
+    "account": {},
+    "value": {},
+    "gas": {},
+    "gasPrice": {},
+    "maxFeePerGas": {},
+    "maxPriorityFeePerGas": {},
+};
+
+async function validGivenOrInput(hre, optionKey, given, nonInteractive) {
     // Prompt with a given initial value.
-    // TODO.
+    const givenValues = {};
+    givenValues[optionKey] = given;
+    const prompts = hre.blueprints.prepareArgumentPrompts(
+        [argumentSpecs[optionKey]], nonInteractive, {}
+    );
+    const answers = await new hre.enquirerPlus.Enquirer().prompt(prompts);
+    return answers[optionKey];
 }
 
-async function validateGivenOrDefault(optionKey, given, default_) {
+async function validGivenOrDefault(hre, optionKey, given, default_) {
     // Prompt non-interactively with a given initial value.
     // On error, go by default.
-    // TODO.
+    try {
+        return await validGivenOrInput(hre, optionKey, given, true);
+    } catch {
+        return default_;
+    }
 }
 
-async function processProvidedOrPrompt(optionKey, specType, given) {
-    if (specType === "mixed") {
-        const {action, "default": default_, value} = given || {};
-        if (action === undefined) {
-            return await givenOrValidInput(optionKey, given);
-        } else {
-            switch(action) {
-                case "value":
-                    return await givenOrValidInput(optionKey, value);
-                case "default":
-                    return await validateGivenOrDefault(optionKey, given, default_);
-                default:
-                    throw new Error(
-                        `For transaction option ${optionKey} an invalid mixed value action was given: ${action}.` +
-                        "The valid options are: default, prompt"
-                    );
-            }
-        }
+async function processProvidedOrPrompt(hre, optionKey, given, nonInteractive) {
+    const {"action-type": action, "default": default_, value} = given || {};
+    if (action === undefined) {
+        // A simple value.
+        return await validGivenOrInput(hre, optionKey, given, nonInteractive);
     } else {
-        return await givenOrValidInput(optionKey, given);
+        switch(action) {
+            case "value":
+                return await validGivenOrInput(hre, optionKey, value, nonInteractive);
+            case "default":
+                return await validGivenOrDefault(hre, optionKey, given, default_);
+            default:
+                throw new Error(
+                    `For transaction option ${optionKey} an invalid mixed value action was given: ${action}.` +
+                    "The valid options are: default, prompt"
+                );
+        }
     }
 }
 
@@ -65,29 +81,9 @@ async function processProvidedOrPrompt(optionKey, specType, given) {
  * `from` (which will not be supported), all the option specs are supported
  * in these formats:
  *
- * 1. Default value on absence.
- *
- * {
- *     // If the value is not provided by the user, use the specified
- *     // value as default. If a default value is not defined, then the
- *     // option will not be specified in the transaction, which results
- *     // in the adapter choosing the proper default value.
- *     type: "simple",
- *     onAbsent: "default",
- *     default: (someValue)
- * }
- *
- * 2. Prompt value on absence. The prompt type and message is already defined
- *    for each parameter respectively.
- *
- * {
- *     type: "simple",
- *     onAbsent: "prompt"
- * }
- *
- * 3. Default value on absence, but the provided value can be mixed: Either
- *    a value or {action: "value", value} object, a {action: "default"} object
- *    (which will cause the value to not be specified). If {value} is undefined
+ * 1. Default value on absence, but the provided value can be mixed: Either
+ *    a value or {"action-type": "value", value} object, a {"action-type": "default"}
+ *    object (which will cause the value to not be specified). If {value} is undefined
  *    or invalid, it will cause a prompt (since it's needed). If the specified
  *    value is not provided by the user, the value specified by default will
  *    be used. If the by-default value is not defined, then the option will
@@ -95,14 +91,13 @@ async function processProvidedOrPrompt(optionKey, specType, given) {
  *    the proper default value.
  *
  * {
- *     type: "mixed",
  *     onAbsent: "default",
  *     default: (someValue)
  * }
  *
- * 4. Prompt value on absence, but the provided value can be mixed: Either
- *    a value or {action: "value", value} object, a {action: "default"} object
- *    (which will cause the value to not be specified). If {value} is undefined
+ * 2. Prompt value on absence, but the provided value can be mixed: Either
+ *    a value or {"action-type": "value", value} object, a {"action-type": "default"}
+ *    object (which will cause the value to not be specified). If {value} is undefined
  *    or invalid, it will cause a prompt.
  *
  * {
@@ -126,21 +121,17 @@ async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteracti
     const result = {};
     if (givenTxOptions.eip155) result.eip155 = true;
     for (let optionKey in ["account", "value", "gas", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas"]) {
-        const {type, onAbsent, "default": default_} = txOptionsSpec[optionKey] || {};
+        const {onAbsent, "default": default_} = txOptionsSpec[optionKey] || {onAbsent: "default"};
         const provided = givenTxOptions[optionKey];
         if (provided) {
-            result[optionKey] = await processProvidedOrPrompt(
-                optionKey, type, provided
-            );
+            result[optionKey] = await processProvidedOrPrompt(optionKey, provided, nonInteractive);
         } else if (onAbsent === "default") {
             if (default_ !== null && default_ !== undefined) {
                 result[optionKey] = default_;
             }
             // Otherwise: the option will not be specified.
         } else if (onAbsent === "prompt") {
-            result[optionKey] = await processProvidedOrPrompt(
-                optionKey, type,
-            );
+            result[optionKey] = await processProvidedOrPrompt(optionKey, nonInteractive);
         } else {
             throw new Error(
                 `For transaction option ${optionKey} an invalid onAbsent setting was given: ${onAbsent}.` +
