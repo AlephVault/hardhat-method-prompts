@@ -3,13 +3,13 @@
  * the given tx option presents, eventually becoming interactive to prompt
  * for the missing / invalid data.
  * @param hre The hardhat runtime environment.
- * @param optionsSpec The options spec.
- * @param givenOptions The actual options.
+ * @param txOptionsSpec The transactions options spec.
+ * @param givenTxOptions The transactions actual options.
  * @param nonInteractive Whether to raise an error when this method is about
  * to become interactive.
  * @returns {Promise<*>} The processed options as an object (async function).
  */
-async function processTxOptions(hre, optionsSpec, givenOptions, nonInteractive) {
+async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteractive) {
     // TODO
     return {};
 }
