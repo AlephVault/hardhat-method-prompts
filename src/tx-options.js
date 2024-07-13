@@ -1,10 +1,34 @@
 const argumentSpecs = {
-    "account": {},
-    "value": {},
-    "gas": {},
-    "gasPrice": {},
-    "maxFeePerGas": {},
-    "maxPriorityFeePerGas": {},
+    "account": {
+        description: "The account to use",
+        message: "Choose the index of one of your accounts in this network",
+        argumentType: "account"
+    },
+    "value": {
+        description: "The payment to attach to the method",
+        message: "Choose the payment to attach",
+        argumentType: "token-amount"
+    },
+    "gas": {
+        description: "The maximum amount of gas to use",
+        message: "Choose the maximum amount of gas to use",
+        argumentType: "bigint"
+    },
+    "gasPrice": {
+        description: "The price to pay for each gas unit",
+        message: "Choose the price to pay for each gas unit",
+        argumentType: "token-amount"
+    },
+    "maxFeePerGas": {
+        description: "The maximum price to pay for each gas unit",
+        message: "Choose the maximum price to pay for each gas unit",
+        argumentType: "token-amount"
+    },
+    "maxPriorityFeePerGas": {
+        description: "The maximum priority price to pay for each gas unit (above the base price)",
+        message: "Choose the maximum priority price to pay for each gas unit",
+        argumentType: "token-amount"
+    },
 };
 
 async function validGivenOrInput(hre, optionKey, given, nonInteractive) {
