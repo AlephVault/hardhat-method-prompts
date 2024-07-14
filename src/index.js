@@ -1,6 +1,7 @@
 const {invoke} = require("./method-call");
+const {extendEnvironment} = require("hardhat/config");
 
-class ContractMethodCall {
+class ContractMethodPrompt {
     construct(methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
         this._method = {type: methodType, name, onError, onSuccess};
         this._argumentsSpec = argumentsSpec || [];
@@ -25,5 +26,9 @@ class ContractMethodCall {
         );
     }
 }
+
+extendEnvironment((hre) => {
+    hre.methodPrompts = {ContractMethodPrompt}
+})
 
 module.exports = {};
