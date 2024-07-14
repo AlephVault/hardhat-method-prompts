@@ -21,6 +21,10 @@ class ContractMethodPrompt {
         hre, deploymentId, deploymentContractId, givenArguments, givenTxOptions, nonInteractive
     ) {
         const contract = await hre.common.getDeployedContract(deploymentContractId, deploymentId);
+        console.log(
+            `Using deployed contract: ${deploymentContractId}` +
+            (deploymentId ? ` (deployment id: ${deploymentId})` : "")
+        );
         return await this.invokeOnContract(
             hre, contract, givenArguments, givenTxOptions, nonInteractive
         );
