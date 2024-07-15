@@ -25,7 +25,7 @@ class _ContractMethodPrompt {
         // 1. Get the contract.
         let contract = null;
         try {
-            contract = await this._hre.common.getDeployedContract(deploymentContractId, deploymentId);
+            contract = await this._hre.ignition.getDeployedContract(deploymentContractId, deploymentId);
         } catch(e) {}
         if (!contract) {
             console.log(`The ${deploymentContractId} seems to be not deployed in the current deployment`);
@@ -45,8 +45,8 @@ class _ContractMethodPrompt {
 
 extendEnvironment((hre) => {
     class ContractMethodPrompt extends _ContractMethodPrompt {
-        constructor(...args) {
-            super(hre, ...args);
+        constructor(methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
+            super(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec);
         }
     }
 
