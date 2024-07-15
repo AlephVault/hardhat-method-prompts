@@ -36,7 +36,7 @@ async function validGivenOrInput(hre, optionKey, given, nonInteractive) {
     const givenValues = {};
     givenValues[optionKey] = given;
     const prompts = hre.blueprints.prepareArgumentPrompts(
-        [argumentSpecs[optionKey]], nonInteractive, {}
+        [{...argumentSpecs[optionKey], name: optionKey}], nonInteractive, {}
     );
     const answers = await new hre.enquirerPlus.Enquirer().prompt(prompts);
     return answers[optionKey];
@@ -71,6 +71,8 @@ async function processProvidedOrPrompt(hre, optionKey, given, nonInteractive) {
         }
     }
 }
+
+const txOptionKeys = ["account", "value", "gas", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas"];
 
 /**
  * Processes the tx options by taking the given ones and validating about
@@ -144,18 +146,19 @@ async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteracti
     givenTxOptions ||= {};
     const result = {};
     if (givenTxOptions.eip155) result.eip155 = true;
-    for (let optionKey in ["account", "value", "gas", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas"]) {
+    for (let index = 0; index < txOptionKeys.length; index++) {
+        const optionKey = txOptionKeys[index];
         const {onAbsent, "default": default_} = txOptionsSpec[optionKey] || {onAbsent: "default"};
         const provided = givenTxOptions[optionKey];
         if (provided) {
-            result[optionKey] = await processProvidedOrPrompt(optionKey, provided, nonInteractive);
+            result[optionKey] = await processProvidedOrPrompt(hre, optionKey, provided, nonInteractive);
         } else if (onAbsent === "default") {
             if (default_ !== null && default_ !== undefined) {
                 result[optionKey] = default_;
             }
             // Otherwise: the option will not be specified.
         } else if (onAbsent === "prompt") {
-            result[optionKey] = await processProvidedOrPrompt(optionKey, nonInteractive);
+            result[optionKey] = await processProvidedOrPrompt(hre, optionKey, nonInteractive);
         } else {
             throw new Error(
                 `For transaction option ${optionKey} an invalid onAbsent setting was given: ${onAbsent}.` +
