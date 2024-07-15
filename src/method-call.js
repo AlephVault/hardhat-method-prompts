@@ -31,7 +31,7 @@ async function invokeSend(
         console.log(`Invoking SEND method: ${method.name} on contract: ${await hre.common.getContractAddress(contract)}`);
         console.log("- args:", processedArguments);
         console.log("- tx. options:", processedTxOptions);
-        await onSuccess(hre.common.send(contract, name, processedArguments, processedTxOptions));
+        await onSuccess(await hre.common.send(contract, name, processedArguments, processedTxOptions));
     } catch(e) {
         await onError(e);
     }
@@ -63,7 +63,7 @@ async function invokeCall(
         const processedArguments = await processArguments(hre, argumentsSpec, givenArguments, nonInteractive);
         console.log(`Invoking CALL method: ${method.name} on contract: ${await hre.common.getContractAddress(contract)}`);
         console.log("- args:", processedArguments);
-        await onSuccess(hre.common.call(contract, name, processedArguments));
+        await onSuccess(await hre.common.call(contract, name, processedArguments));
     } catch(e) {
         await onError(e);
     }
