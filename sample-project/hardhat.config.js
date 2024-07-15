@@ -54,7 +54,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
                 gasPrice: {onAbsent: "prompt"}
             }
         );
-        await method.invokeOnDeployedContract(
+        await method.invoke(
             deploymentId, "MyOwnedERC1155Module#MyOwnedERC1155",
             {to, id, amount, data}, {gasPrice, account}, nonInteractive
         );

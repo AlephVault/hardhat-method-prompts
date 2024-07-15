@@ -9,35 +9,16 @@ class _ContractMethodPrompt {
         this._txOptionsSpec = txOptionsSpec || {};
     }
 
-    async invokeOnContract(
-        contract, givenArguments, givenTxOptions, nonInteractive
+    async invoke(
+        deploymentId, deployedContractId, givenArguments, givenTxOptions, nonInteractive
     ) {
+        const deploymentContractId = await new this._hre.enquirerPlus.Enquirer.GivenOrDeployedContractSelect({
+            deploymentId, message: "Select one of your deployed contracts:", given: deployedContractId
+        }).run();
+        const contract = await this._hre.ignition.getDeployedContract(deploymentContractId, deploymentId);
         await invoke(
             this._hre, contract, this._method, this._argumentsSpec, givenArguments || [],
             this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
-        );
-    }
-
-    async invokeOnDeployedContract(
-        deploymentId, deploymentContractId, givenArguments, givenTxOptions, nonInteractive
-    ) {
-        // 1. Get the contract.
-        let contract = null;
-        try {
-            contract = await this._hre.ignition.getDeployedContract(deploymentContractId, deploymentId);
-        } catch(e) {}
-        if (!contract) {
-            console.log(`The ${deploymentContractId} seems to be not deployed in the current deployment`);
-            return;
-        }
-
-        // 2. Use the contract.
-        console.log(
-            `Using deployed contract: ${deploymentContractId}` +
-            (deploymentId ? ` (deployment id: ${deploymentId})` : "")
-        );
-        return await this.invokeOnContract(
-            contract, givenArguments, givenTxOptions, nonInteractive
         );
     }
 }
