@@ -12,7 +12,6 @@ class _ContractMethodPrompt {
     async invokeOnContract(
         contract, givenArguments, givenTxOptions, nonInteractive
     ) {
-        if (!contract)
         await invoke(
             this._hre, contract, this._method, this._argumentsSpec, givenArguments || [],
             this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
