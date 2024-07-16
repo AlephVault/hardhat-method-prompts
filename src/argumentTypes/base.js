@@ -1,5 +1,9 @@
 const {Prompt, Input} = require("enquirer");
 
+/**
+ * This is a prompt that actually interacts with
+ * the `hre.blueprints` (hardhat-blueprints) library.
+ */
 class BaseBlueprintPrompt extends Prompt {
     constructor({hre, nonInteractive, given, ...options}) {
         super(options);
