@@ -40,12 +40,12 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
             }
             console.log(`>>> Processing input / prompting for element ${index}${suffix} of ${this._length} elements`);
             const given_ = this._given ? this._given[index] : undefined;
-            elements.push(await this._apply([{
+            elements.push((await this._apply([{
                 name: "element",
                 description: "Element to add",
                 message: `Element #${elements.length}:`,
                 argumentType: this._subArgumentType
-            }], {element: given_}));
+            }], {element: given_})).element);
         }
         return elements;
     }
@@ -66,12 +66,12 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
                 argumentType: "boolean"
             }, {}]);
             if (!confirm) break;
-            elements.push(await this._apply([{
+            elements.push((await this._apply([{
                 name: "element",
                 description: "Element to add",
                 message: `Element #${elements.length}:`,
                 argumentType: this._subArgumentType
-            }], {}));
+            }], {})).element);
         }
         return elements;
     }
@@ -81,7 +81,7 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
      * amount of times (as given or stated) or a dynamic one.
      * @returns {Promise<*[]>} The answers (async function).
      */
-    async run() {
+    async _run() {
         console.log(this.options.message);
 
         // Attempt 1. Use this._given if it looks like an array.
@@ -105,6 +105,17 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
         } else {
             return await this._runAsWanted();
         }
+    }
+
+    /**
+     * Prompts the user to add the elements, either a fixed
+     * amount of times (as given or stated) or a dynamic one.
+     * @returns {Promise<*[]>} The answers (async function).
+     */
+    async run() {
+        this.value = await this._run();
+        this.submit();
+        return this.value;
     }
 }
 
