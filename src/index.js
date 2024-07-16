@@ -1,7 +1,12 @@
 const {invoke} = require("./method-call");
 const {extendEnvironment} = require("hardhat/config");
+const {ArrayPluginPrompt: ArrayPluginPrompt_} = require("./argumentTypes/arrays");
 
-class _ContractMethodPrompt {
+/**
+ * This class is a helper to execute a method over a deployed
+ * contract (via hardhat-ignition).
+ */
+class ContractMethodPrompt_ {
     constructor(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
         this._hre = hre;
         this._method = {type: methodType, name, onError, onSuccess};
@@ -24,13 +29,32 @@ class _ContractMethodPrompt {
 }
 
 extendEnvironment((hre) => {
-    class ContractMethodPrompt extends _ContractMethodPrompt {
+    if (!hre.ignition) {
+        throw new Error(
+            "The hardhat-ignition-deploy-everything module requires @nomicfoundation/hardhat-ignition " +
+            "to be installed as a plug-in, along with the plug-in " + (
+                hre.viem ? "@nomicfoundation/hardhat-ignition/viem" : "@nomicfoundation/hardhat-ignition-ethers"
+            )
+        );
+    }
+
+    class ContractMethodPrompt extends ContractMethodPrompt_ {
         constructor(methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
             super(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec);
         }
     }
 
-    hre.methodPrompts = {ContractMethodPrompt}
+    class ArrayPluginPrompt extends ArrayPluginPrompt_ {
+        constructor(options) {
+            super({hre, ...options});
+        }
+    }
+
+    // Registering the methodPrompts namespace.
+    hre.methodPrompts = {ContractMethodPrompt};
+
+    // Registering the enquirer-plus types.
+    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:array", ArrayPluginPrompt);
 })
 
 module.exports = {};
