@@ -1,10 +1,10 @@
-const {Prompt, Input} = require("enquirer");
+const {Enquirer} = require("hardhat-enquirer-plus/src/core");
 
 /**
  * This is a prompt that actually interacts with
  * the `hre.blueprints` (hardhat-blueprints) library.
  */
-class BaseBlueprintPrompt extends Prompt {
+class BaseBlueprintPrompt extends Enquirer.Prompt {
     constructor({hre, nonInteractive, given, ...options}) {
         super(options);
         this._hre = hre;
