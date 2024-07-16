@@ -53,8 +53,10 @@ extendEnvironment((hre) => {
     // Registering the methodPrompts namespace.
     hre.methodPrompts = {ContractMethodPrompt};
 
-    // Registering the enquirer-plus types.
-    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:array", ArrayPluginPrompt);
+    // Registering the enquirer-plus types (due tu multi-package issues,
+    // this is done as a function since otherwise it's not being treated
+    // as a class, and thus raises an error).
+    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:array", () => ArrayPluginPrompt);
 })
 
 module.exports = {};
