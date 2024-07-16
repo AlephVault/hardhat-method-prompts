@@ -6,16 +6,16 @@ const {BaseBlueprintPrompt} = require("./base");
  * of elements.
  */
 class ArrayPluginPrompt extends BaseBlueprintPrompt {
-    constructor({length, subArguments, ...options}) {
+    constructor({length, subArgumentType, ...options}) {
         super(options);
         if (length !== undefined && (typeof length !== "number" || length < 0)) {
             throw new Error(`Invalid length: ${length}`);
         }
-        if (!subArguments || Object.keys(subArguments).length === 0) {
-            throw new Error(`Missing or empty sub-arguments`);
+        if (!subArgumentType || Object.keys(subArgumentType).length === 0) {
+            throw new Error(`Missing or empty item argument type`);
         }
         this._length = length;
-        this._subArguments = subArguments;
+        this._subArgumentType = subArgumentType;
     }
 
     /**
@@ -40,7 +40,12 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
             }
             console.log(`>>> Processing input / prompting for element ${index}${suffix} of ${this._length} elements`);
             const given_ = this._given ? this._given[index] : undefined;
-            elements.push(await this._apply(this._subArguments, given_));
+            elements.push(await this._apply([{
+                name: "element",
+                description: "Element to add",
+                message: `Element #${elements.length}:`,
+                argumentType: this._subArgumentType
+            }], {element: given_}));
         }
         return elements;
     }
@@ -61,7 +66,12 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
                 argumentType: "boolean"
             }, {}]);
             if (!confirm) break;
-            elements.push(elements.push(await this._apply(this._subArguments, {})));
+            elements.push(await this._apply([{
+                name: "element",
+                description: "Element to add",
+                message: `Element #${elements.length}:`,
+                argumentType: this._subArgumentType
+            }], {}));
         }
         return elements;
     }
