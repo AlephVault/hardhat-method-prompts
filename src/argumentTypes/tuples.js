@@ -15,6 +15,8 @@ class TuplePluginPrompt extends BaseBlueprintPrompt {
     }
 
     async _run() {
+        console.log(this.options.message);
+
         // Attempt 1. Use this._given if it looks like an array.
         // In this case, it will become a fixed input.
         // Otherwise, set it to undefined.
@@ -31,12 +33,12 @@ class TuplePluginPrompt extends BaseBlueprintPrompt {
         const given = this._given || [];
         const elements = [];
         for(let index = 0; index < this._argumentTypes.length; index++) {
-            elements.push((await this._apply({
+            elements.push((await this._apply([{
                 name: "element",
                 description: "A tuple element",
                 message: `Element #${elements.length}:`,
                 argumentType: this._argumentTypes[index]
-            }, given[index])).element);
+            }], given[index])).element);
         }
         return elements;
     }
