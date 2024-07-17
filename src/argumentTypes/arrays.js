@@ -88,11 +88,13 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
         // In this case, it will become a fixed input.
         // Otherwise, set it to undefined.
         if (this._given) {
-            if (typeof this._given.length === "number" && this._given.length >= 0) {
+            if (typeof this._given.length !== "number" || this._given.length < 0 ||
+                (this._length !== undefined && this._length !== this._given.length)) {
+                console.error(`Invalid given value: ${this._given}`);
+                this._given = undefined;
+            } else {
                 this._length = this._given.length;
                 return await this._runFixed();
-            } else {
-                this._given = undefined;
             }
         }
 
