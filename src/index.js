@@ -1,6 +1,7 @@
 const {invoke} = require("./method-call");
 const {extendEnvironment} = require("hardhat/config");
 const {ArrayPluginPrompt: ArrayPluginPrompt_} = require("./argumentTypes/arrays");
+const {TuplePluginPrompt: TuplePluginPrompt_} = require("./argumentTypes/tuples");
 
 /**
  * This class is a helper to execute a method over a deployed
@@ -50,6 +51,12 @@ extendEnvironment((hre) => {
         }
     }
 
+    class TuplePluginPrompt extends TuplePluginPrompt_ {
+        constructor(options) {
+            super({hre, ...options});
+        }
+    }
+
     // Registering the methodPrompts namespace.
     hre.methodPrompts = {ContractMethodPrompt};
 
@@ -57,6 +64,7 @@ extendEnvironment((hre) => {
     // this is done as a function since otherwise it's not being treated
     // as a class, and thus raises an error).
     hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:array", () => ArrayPluginPrompt);
+    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:tuple", () => TuplePluginPrompt);
 })
 
 module.exports = {};
