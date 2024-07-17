@@ -6,16 +6,16 @@ const {BaseBlueprintPrompt} = require("./base");
  * of elements.
  */
 class ArrayPluginPrompt extends BaseBlueprintPrompt {
-    constructor({length, subArgumentType, ...options}) {
+    constructor({length, argumentType, ...options}) {
         super(options);
         if (length !== undefined && (typeof length !== "number" || length < 0)) {
             throw new Error(`Invalid length: ${length}`);
         }
-        if (!subArgumentType || Object.keys(subArgumentType).length === 0) {
+        if (!argumentType || Object.keys(argumentType).length === 0) {
             throw new Error(`Missing or empty item argument type`);
         }
         this._length = length;
-        this._subArgumentType = subArgumentType;
+        this._argumentType = argumentType;
     }
 
     /**
@@ -44,7 +44,7 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
                 name: "element",
                 description: "Element to add",
                 message: `Element #${elements.length}:`,
-                argumentType: this._subArgumentType
+                argumentType: this._argumentType
             }], {element: given_})).element);
         }
         return elements;
@@ -70,7 +70,7 @@ class ArrayPluginPrompt extends BaseBlueprintPrompt {
                 name: "element",
                 description: "Element to add",
                 message: `Element #${elements.length}:`,
-                argumentType: this._subArgumentType
+                argumentType: this._argumentType
             }], {})).element);
         }
         return elements;
