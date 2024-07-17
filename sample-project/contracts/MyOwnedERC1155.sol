@@ -93,4 +93,8 @@ contract MyOwnedERC1155 is ERC1155, Ownable {
             '","properties":{}}'
         ))));
     }
+
+    function someTuple() public view returns (string memory, uint256, bool, bytes32) {
+        return ("abc", 1, false, 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef);
+    }
 }
