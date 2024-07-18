@@ -2,6 +2,7 @@ const {invoke} = require("./method-call");
 const {extendEnvironment} = require("hardhat/config");
 const {registerScalarTypes} = require("./argumentTypes/scalar");
 const {registerCompoundTypes} = require("./argumentTypes/compound");
+const {registerDynamicTypes} = require("./argumentTypes/dynamic");
 
 /**
  * This class is a helper to execute a method over a deployed
@@ -41,6 +42,9 @@ extendEnvironment((hre) => {
 
     // Scalar types: uint*, int*, bytes*.
     registerScalarTypes(hre);
+
+    // Dynamic types: string, bytes
+    registerDynamicTypes(hre);
 
     // Compound types: tuple, array.
     registerCompoundTypes(hre);
