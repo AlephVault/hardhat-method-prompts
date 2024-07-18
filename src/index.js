@@ -1,7 +1,5 @@
 const {invoke} = require("./method-call");
 const {extendEnvironment} = require("hardhat/config");
-const {ArrayPluginPrompt: ArrayPluginPrompt_} = require("./argumentTypes/arrays");
-const {TuplePluginPrompt: TuplePluginPrompt_} = require("./argumentTypes/tuples");
 const {registerScalarTypes} = require("./argumentTypes/scalar");
 const {registerCompoundTypes} = require("./argumentTypes/compound");
 
