@@ -3,6 +3,7 @@ const {extendEnvironment} = require("hardhat/config");
 const {ArrayPluginPrompt: ArrayPluginPrompt_} = require("./argumentTypes/arrays");
 const {TuplePluginPrompt: TuplePluginPrompt_} = require("./argumentTypes/tuples");
 const {registerScalarTypes} = require("./argumentTypes/scalar");
+const {registerCompoundTypes} = require("./argumentTypes/compound");
 
 /**
  * This class is a helper to execute a method over a deployed
@@ -31,8 +32,6 @@ class ContractMethodPrompt_ {
 }
 
 extendEnvironment((hre) => {
-    registerScalarTypes(hre);
-
     if (!hre.ignition) {
         throw new Error(
             "The hardhat-ignition-deploy-everything module requires @nomicfoundation/hardhat-ignition " +
@@ -42,32 +41,21 @@ extendEnvironment((hre) => {
         );
     }
 
+    // Scalar types: uint*, int*, bytes*.
+    registerScalarTypes(hre);
+
+    // Compound types: tuple, array.
+    registerCompoundTypes(hre);
+
+    // The contract method call.
     class ContractMethodPrompt extends ContractMethodPrompt_ {
         constructor(methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
             super(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec);
         }
     }
 
-    class ArrayPluginPrompt extends ArrayPluginPrompt_ {
-        constructor(options) {
-            super({hre, ...options});
-        }
-    }
-
-    class TuplePluginPrompt extends TuplePluginPrompt_ {
-        constructor(options) {
-            super({hre, ...options});
-        }
-    }
-
     // Registering the methodPrompts namespace.
     hre.methodPrompts = {ContractMethodPrompt};
-
-    // Registering the enquirer-plus types (due tu multi-package issues,
-    // this is done as a function since otherwise it's not being treated
-    // as a class, and thus raises an error).
-    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:array", () => ArrayPluginPrompt);
-    hre.enquirerPlus.utils.registerPromptClass("plus:hardhat:tuple", () => TuplePluginPrompt);
 })
 
 module.exports = {};
