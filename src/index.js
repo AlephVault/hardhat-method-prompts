@@ -2,6 +2,7 @@ const {invoke} = require("./method-call");
 const {extendEnvironment} = require("hardhat/config");
 const {ArrayPluginPrompt: ArrayPluginPrompt_} = require("./argumentTypes/arrays");
 const {TuplePluginPrompt: TuplePluginPrompt_} = require("./argumentTypes/tuples");
+const {registerScalarTypes} = require("./argumentTypes/scalar");
 
 /**
  * This class is a helper to execute a method over a deployed
@@ -30,6 +31,8 @@ class ContractMethodPrompt_ {
 }
 
 extendEnvironment((hre) => {
+    registerScalarTypes(hre);
+
     if (!hre.ignition) {
         throw new Error(
             "The hardhat-ignition-deploy-everything module requires @nomicfoundation/hardhat-ignition " +

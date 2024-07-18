@@ -79,3 +79,5 @@ function registerScalarTypes(hre) {
         }, `A packed bytes array of length ${index}`)
     }
 }
+
+module.exports = {registerScalarTypes};
