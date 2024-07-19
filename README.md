@@ -110,3 +110,28 @@ await method.invoke(
     {address, id}, {}, nonInteractive
 );
 ```
+
+## Details about transaction options
+The following options can be configured and provided as transaction options:
+
+1. `eip155` can always be specified and must be a boolean.
+2. `account` can be an account ("0" to "{N-1}", where N is the number of accounts).
+3. `value` is the amount to pay (e.g. "100000000000000000000000" or "2.5 ether").
+4. `gas` is an uint256 value with the gas (e.g. "1000000").
+5. `gasPrice` is the amount to pay per gas unit (e.g. "400000000000" or "400 gwei").
+6. `maxFeePerGas` the max EIP-1559 amount to pay per gas unit.
+7. `maxPriorityFeePerGas` the priority EIP-1559 amount to pay per gas unit.
+
+For each of these options (except `eip155`) each input is a string as received
+from command line (this is suitable for _tasks_), but the configuration tolerates
+`{onAbsent: "prompt"}`, `{onAbsent: "default"}` and `{onAbsent: "default", "default": someValue}`.
+
+The meaning of each setting is as follows:
+
+- The first one will prompt the user for a value if the value is not provided.
+- The second one will not prompt the user: it will not be included among the final
+  options and will be treated by default (e.g. gasPrice and gas will be estimated,
+  EIP-1559 ones will not be used or estimated, value will be 0, and the account
+  will be the 0th / first one).
+- The third one works similar: it will not prompt on absence but will use the
+  specified default value when determining the final transaction options.
