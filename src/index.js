@@ -14,15 +14,17 @@ class ContractMethodPrompt_ {
     }
 
     async invoke(
-        deploymentId, deployedContractId, givenArguments, givenTxOptions, nonInteractive
+        deploymentId, deployedContractId, givenArguments, givenTxOptions, nonInteractive, verbose
     ) {
+        deploymentId = deploymentId || `chain-${(await this._hre.ethers.provider.getNetwork()).chainId}`;
         const deploymentContractId = await new this._hre.enquirerPlus.Enquirer.GivenOrDeployedContractSelect({
             deploymentId, message: "Select one of your deployed contracts:", given: deployedContractId
         }).run();
         const contract = await this._hre.ignition.getDeployedContract(deploymentContractId, deploymentId);
         await invoke(
             this._hre, contract, this._method, this._argumentsSpec, givenArguments || [],
-            this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
+            this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false,
+            verbose || false
         );
     }
 }
