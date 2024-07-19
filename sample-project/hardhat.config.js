@@ -14,7 +14,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
     .addOptionalParam("account", "The deployment id")
     .addOptionalParam("gasPrice", "The deployment id")
     .addFlag("nonInteractive", "Whether to throw an error when running")
-    .setAction(async ({deploymentId, to, id, amount, data, account, gasPrice, nonInteractive}, hre, runSuper) => {
+    .setAction(async ({to, id, amount, data, account, gasPrice, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.ContractMethodPrompt(
             "send", "mint", {
                 onError: (e) => {
@@ -50,8 +50,40 @@ task("sample-mint", "Invokes an ERC1155 mint")
             }
         );
         await method.invoke(
-            deploymentId, "MyOwnedERC1155Module#MyOwnedERC1155",
+            undefined, "MyOwnedERC1155Module#MyOwnedERC1155",
             {to, id, value: amount, data}, {account, gasPrice}, nonInteractive
+        );
+    });
+
+task("sample-balance-of", "Invokes an ERC1155 balanceOf")
+    .addOptionalParam("address", "The receiver of the token(s)")
+    .addOptionalParam("id", "The id of the token")
+    .addFlag("nonInteractive", "Whether to throw an error when running")
+    .setAction(async ({address, id, nonInteractive}, hre, runSuper) => {
+        const method = new hre.methodPrompts.ContractMethodPrompt(
+            "call", "balance", {
+                onError: (e) => {
+                    console.error("There was an error while running this method");
+                    console.error(e);
+                },
+                onSuccess: (value) => {
+                    console.log("Balance:", value);
+                }
+            }, [{
+                name: "address",
+                description: "The target of the mint",
+                message: "Who will receive the minted tokens?",
+                argumentType: "smart-address"
+            }, {
+                name: "id",
+                description: "The ID of the token",
+                message: "What's the token you want to mint?",
+                argumentType: "uint256"
+            }], {}
+        );
+        await method.invoke(
+            undefined, "MyOwnedERC1155Module#MyOwnedERC1155",
+            {address, id}, {}, nonInteractive
         );
     });
 
