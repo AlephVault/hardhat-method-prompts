@@ -13,7 +13,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
     .addOptionalParam("data", "The data")
     .addOptionalParam("account", "The deployment id")
     .addOptionalParam("gasPrice", "The deployment id")
-    .addOptionalParam("nonInteractive", "Whether to throw an error when running")
+    .addFlag("nonInteractive", "Whether to throw an error when running")
     .setAction(async ({deploymentId, to, id, amount, data, account, gasPrice, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.ContractMethodPrompt(
             "send", "mint", {
