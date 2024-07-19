@@ -33,22 +33,17 @@ task("sample-mint", "Invokes an ERC1155 mint")
                 name: "id",
                 description: "The ID of the token",
                 message: "What's the token you want to mint?",
-                argumentType: "bigint"
+                argumentType: "uint256"
             }, {
                 name: "value",
                 description: "The amount of that token",
                 message: "What's the amount of the token?",
-                argumentType: "bigint"
+                argumentType: "uint256"
             }, {
                 name: "data",
                 description: "The data for the transaction",
                 message: "Add some hexadecimal binary data:",
-                argumentType: {
-                    "type": "plus:given-or-valid-input",
-                    "makeInvalidInputMessage": (v) => `Invalid hex data: ${v}`,
-                    "onInvalidGiven": (v) => console.log(`Invalid given hex data: ${v}`),
-                    "validate": /^0x([a-fA-F0-9]{2})*$/
-                }
+                argumentType: "bytes"
             }], {
                 account: {onAbsent: "default"},
                 gasPrice: {onAbsent: "prompt"}
