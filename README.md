@@ -57,6 +57,6 @@ And then invoking it like this:
 
 ```javascript
 await method.invoke(
-    deploymentId, someContractId, {to, id, amount, data}, {gasPrice, account}, nonInteractive
+    deploymentId, someContractId, {to, id, amount, data}, {gasPrice, account}, nonInteractive, verbose
 );
 ```
