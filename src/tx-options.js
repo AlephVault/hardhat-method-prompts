@@ -54,7 +54,6 @@ async function validGivenOrDefault(hre, optionKey, given, default_) {
 
 async function processProvidedOrPrompt(hre, optionKey, given, nonInteractive) {
     const {"action-type": action, "default": default_, value} = given || {};
-    console.log("action:", action, "default:", default_, "value:", value);
     if (action === undefined) {
         // A simple value.
         return await validGivenOrInput(hre, optionKey, given, nonInteractive);
@@ -151,7 +150,6 @@ async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteracti
         const optionKey = txOptionKeys[index];
         const {onAbsent, "default": default_} = txOptionsSpec[optionKey] || {onAbsent: "default"};
         const provided = givenTxOptions[optionKey];
-        console.log("key:", optionKey, "provided:", provided);
         if (provided) {
             result[optionKey] = await processProvidedOrPrompt(hre, optionKey, provided, nonInteractive);
         } else if (onAbsent === "default") {
