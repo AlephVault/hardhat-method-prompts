@@ -51,7 +51,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
         );
         await method.invoke(
             deploymentId, "MyOwnedERC1155Module#MyOwnedERC1155",
-            {to, id, amount, data}, {gasPrice, account}, nonInteractive
+            {to, id, value: amount, data}, {account, gasPrice}, nonInteractive
         );
     });
 
