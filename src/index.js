@@ -13,8 +13,18 @@ class ContractMethodPrompt_ {
         this._txOptionsSpec = txOptionsSpec || {};
     }
 
+    /**
+     * Invokes a send or call method.
+     * @param deploymentId The deployment id.
+     * @param deployedContractId The deployed contract id (e.g. MyModule#MyContract).
+     * @param givenArguments The given arguments (an object).
+     * @param givenTxOptions The given transaction options (an object with fixed, optional, keys).
+     * @param nonInteractive Whether to raise an error when this method is about
+     * to become interactive.
+     * @returns {Promise<void>} The result (async function).
+     */
     async invoke(
-        deploymentId, deployedContractId, givenArguments, givenTxOptions, nonInteractive, verbose
+        deploymentId, deployedContractId, givenArguments, givenTxOptions, nonInteractive
     ) {
         deploymentId = deploymentId || `chain-${(await this._hre.ethers.provider.getNetwork()).chainId}`;
         const deploymentContractId = await new this._hre.enquirerPlus.Enquirer.GivenOrDeployedContractSelect({
@@ -23,8 +33,7 @@ class ContractMethodPrompt_ {
         const contract = await this._hre.ignition.getDeployedContract(deploymentContractId, deploymentId);
         await invoke(
             this._hre, contract, this._method, this._argumentsSpec, givenArguments || [],
-            this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false,
-            verbose || false
+            this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
         );
     }
 }

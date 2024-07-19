@@ -14,8 +14,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
     .addOptionalParam("account", "The deployment id")
     .addOptionalParam("gasPrice", "The deployment id")
     .addFlag("nonInteractive", "Whether to throw an error when running")
-    .addFlag("verbose", "Whether to show logs or not")
-    .setAction(async ({deploymentId, to, id, amount, data, account, gasPrice, nonInteractive, verbose}, hre, runSuper) => {
+    .setAction(async ({deploymentId, to, id, amount, data, account, gasPrice, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.ContractMethodPrompt(
             "send", "mint", {
                 onError: (e) => {
@@ -52,7 +51,7 @@ task("sample-mint", "Invokes an ERC1155 mint")
         );
         await method.invoke(
             deploymentId, "MyOwnedERC1155Module#MyOwnedERC1155",
-            {to, id, value: amount, data}, {account, gasPrice}, nonInteractive, verbose
+            {to, id, value: amount, data}, {account, gasPrice}, nonInteractive
         );
     });
 

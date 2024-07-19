@@ -6,18 +6,16 @@ const {processTxOptions} = require("./tx-options");
  * @param hre The hardhat runtime environment.
  * @param contract A contract instance.
  * @param method The method to call, as described.
- * @param argumentsSpec The expected arguments (an array).
- * @param givenArguments The given arguments (an array).
+ * @param argumentsSpec The expected arguments (an object).
+ * @param givenArguments The given arguments (an object).
  * @param txOptionsSpec The expected transaction options (an object with fixed, optional, keys).
  * @param givenTxOptions The given transaction options (an object with fixed, optional, keys).
  * @param nonInteractive Whether to raise an error when this method is about
  * to become interactive.
- * @param verbose Whether to show logs or not.
  * @returns {Promise<void>} Nothing (async function).
  */
 async function invokeSend(
-    hre, contract, method, argumentsSpec, givenArguments, txOptionsSpec, givenTxOptions,
-    nonInteractive, verbose
+    hre, contract, method, argumentsSpec, givenArguments, txOptionsSpec, givenTxOptions, nonInteractive
 ) {
     let {name, onError, onSuccess} = method;
     onError = onError || (async (e) => {
@@ -30,7 +28,7 @@ async function invokeSend(
     try {
         const processedArguments = await processArguments(hre, argumentsSpec, givenArguments, nonInteractive);
         const processedTxOptions = await processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteractive);
-        if (verbose) {
+        if (hre.hardhatArguments.verbose) {
             const contractAddress = await hre.common.getContractAddress(contract);
             console.log(`Invoking SEND method: ${method.name} on contract: ${contractAddress}`);
             console.log("- args:", processedArguments);
@@ -47,15 +45,14 @@ async function invokeSend(
  * @param hre The hardhat runtime environment.
  * @param contract A contract instance.
  * @param method The method to call, as described.
- * @param argumentsSpec The expected arguments (an array).
- * @param givenArguments The given arguments (an array).
+ * @param argumentsSpec The expected arguments (an object).
+ * @param givenArguments The given arguments (an object).
  * @param nonInteractive Whether to raise an error when this method is about
  * to become interactive.
- * @param verbose Whether to show logs or not.
  * @returns {Promise<void>} Nothing (async function).
  */
 async function invokeCall(
-    hre, contract, method, argumentsSpec, givenArguments, nonInteractive, verbose
+    hre, contract, method, argumentsSpec, givenArguments, nonInteractive
 ) {
     let {name, onError, onSuccess} = method;
     onError = onError || (async (e) => {
@@ -67,7 +64,7 @@ async function invokeCall(
 
     try {
         const processedArguments = await processArguments(hre, argumentsSpec, givenArguments, nonInteractive);
-        if (verbose) {
+        if (hre.hardhatArguments.verbose) {
             const contractAddress = await hre.common.getContractAddress(contract);
             console.log(`Invoking CALL method: ${method.name} on contract: ${contractAddress}`);
             console.log("- args:", processedArguments);
@@ -107,11 +104,10 @@ async function invokeCall(
  * @param givenTxOptions The given transaction options (an object with fixed, optional, keys).
  * @param nonInteractive Whether to raise an error when this method is about
  * to become interactive.
- * @param verbose Whether to show logs or not.
  * @returns {Promise<void>} Nothing (async function).
  */
 async function invoke(
-    hre, contract, method, argumentsSpec, givenArguments, txOptionsSpec, givenTxOptions, nonInteractive, verbose
+    hre, contract, method, argumentsSpec, givenArguments, txOptionsSpec, givenTxOptions, nonInteractive
 ) {
     method = method || {};
     const {type} = method;
@@ -122,13 +118,13 @@ async function invoke(
     switch(type) {
         case "call":
             await invokeCall(
-                hre, contract, method, argumentsSpec, givenArguments, nonInteractive, verbose
+                hre, contract, method, argumentsSpec, givenArguments, nonInteractive
             );
             break;
         case "send":
             await invokeSend(
                 hre, contract, method, argumentsSpec, givenArguments, txOptionsSpec, givenTxOptions,
-                nonInteractive, verbose
+                nonInteractive
             );
             break;
         default:
