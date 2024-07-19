@@ -12,7 +12,7 @@ const argumentSpecs = {
     "gas": {
         description: "The maximum amount of gas to use",
         message: "Choose the maximum amount of gas to use",
-        argumentType: "bigint"
+        argumentType: "uint256"
     },
     "gasPrice": {
         description: "The price to pay for each gas unit",
