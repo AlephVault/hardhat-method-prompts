@@ -5,7 +5,7 @@ A hardhat plugin offering the possibility to quickly implement prompt-powered me
 Run this command to install it from NPM:
 
 ```shell
-npm install --save-dev hardhat-common-tools@^1.4.0 hardhat-enquirer-plus@^1.4.1 hardhat-blueprints@^1.2.2
+npm install --save-dev hardhat-common-tools@^1.4.0 hardhat-enquirer-plus@^1.4.2 hardhat-blueprints@^1.2.2
 ```
 
 # Usage
@@ -57,6 +57,14 @@ And then invoking it like this:
 
 ```javascript
 await method.invoke(
-    deploymentId, someContractId, {to, id, amount, data}, {gasPrice, account}, nonInteractive, verbose
+    // In my case, this is a valid ignition Module#Contract id.
+    // If you don't have a specific id, use undefined. It will
+    // be prompted to you.
+    //
+    // Also, feel free to use undfined for deploymentId if you
+    // are not interacting with a particular deployment. It will
+    // default to `chain-{yourChainId}`.
+    deploymentId, "MyOwnedERC1155Module#MyOwnedERC1155",
+    {to, id, value: amount, data}, {account, gasPrice}, nonInteractive
 );
 ```
