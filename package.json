@@ -23,7 +23,7 @@
   "homepage": "https://github.com/AlephVault/hardhat-method-prompts#readme",
   "peerDependencies": {
     "hardhat": "^2.22.6",
-    "hardhat-blueprints": "^1.2.1",
+    "hardhat-blueprints": "^1.2.2",
     "hardhat-common-tools": "^1.4.0",
     "hardhat-enquirer-plus": "^1.4.0"
   }
