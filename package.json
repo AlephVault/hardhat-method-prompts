@@ -25,6 +25,6 @@
     "hardhat": "^2.22.6",
     "hardhat-blueprints": "^1.2.2",
     "hardhat-common-tools": "^1.4.0",
-    "hardhat-enquirer-plus": "^1.4.1"
+    "hardhat-enquirer-plus": "^1.4.2"
   }
 }
