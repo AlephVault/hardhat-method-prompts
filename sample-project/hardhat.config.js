@@ -4,6 +4,7 @@ require("hardhat-enquirer-plus");
 require("hardhat-blueprints");
 require("hardhat-openzeppelin-common-blueprints");
 require("..");
+
 const {task} = require("hardhat/config");
 
 task("sample-mint", "Invokes an ERC1155 mint")
@@ -89,6 +90,12 @@ task("sample-balance-of", "Invokes an ERC1155 balanceOf")
             deploymentId, deployedContractId,
             {address, id}, {}, nonInteractive
         );
+    });
+
+task("balance-of", "Gets the native balance of for an account")
+    .addPositionalParam("address", "The address (or index of account)")
+    .setAction(async ({address}, hre, runSuper) => {
+
     });
 
 /** @type import('hardhat/config').HardhatUserConfig */
