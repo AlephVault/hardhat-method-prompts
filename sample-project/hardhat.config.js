@@ -12,11 +12,11 @@ task("sample-mint", "Invokes an ERC1155 mint")
     .addOptionalParam("id", "The id of the token")
     .addOptionalParam("amount", "The amount of the token")
     .addOptionalParam("data", "The data")
-    .addOptionalParam("account", "The deployment id")
-    .addOptionalParam("gasPrice", "The deployment id")
+    .addOptionalParam("account", "The account to use (the first, by default)")
+    .addOptionalParam("gasPrice", "The gas price to use")
     .addOptionalParam("deploymentId", "An optional ignition deployment id")
     .addOptionalParam("deployedContractId", "An optional ignition deployed contract id")
-    .addFlag("nonInteractive", "Whether to throw an error when running")
+    .addFlag("nonInteractive", "Whether to throw an error when becoming interactively")
     .setAction(async ({deploymentId, deployedContractId, to, id, amount, data, account, gasPrice, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.ContractMethodPrompt(
             "send", "mint", {
@@ -63,7 +63,7 @@ task("sample-balance-of", "Invokes an ERC1155 balanceOf")
     .addOptionalParam("id", "The id of the token")
     .addOptionalParam("deploymentId", "An optional ignition deployment id")
     .addOptionalParam("deployedContractId", "An optional ignition deployed contract id")
-    .addFlag("nonInteractive", "Whether to throw an error when running")
+    .addFlag("nonInteractive", "Whether to throw an error when becoming interactively")
     .setAction(async ({deploymentId, deployedContractId, address, id, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.ContractMethodPrompt(
             "call", "balanceOf", {
@@ -94,7 +94,7 @@ task("sample-balance-of", "Invokes an ERC1155 balanceOf")
 
 task("balance-of", "Gets the native balance of for an account")
     .addPositionalParam("address", "The address (or index of account)")
-    .addFlag("nonInteractive", "Whether to throw an error when running")
+    .addFlag("nonInteractive", "Whether to throw an error when becoming interactively")
     .setAction(async ({address, nonInteractive}, hre, runSuper) => {
         const method = new hre.methodPrompts.CustomPrompt(
             function([address]) {
@@ -115,6 +115,39 @@ task("balance-of", "Gets the native balance of for an account")
             }], {}
         );
         await method.invoke({address}, {}, nonInteractive);
+    });
+
+task("transfer", "Transfers native balance to another account")
+    .addPositionalParam("address", "The target address")
+    .addPositionalParam("amount", "The amount of native tokens to send")
+    .addOptionalParam("account", "The account to use (the first, by default)")
+    .addOptionalParam("gasPrice", "The gas price to use")
+    .addFlag("nonInteractive", "Whether to throw an error when becoming interactively")
+    .setAction(async ({address, amount, nonInteractive, account, gasPrice}, hre, runSuper) => {
+        const method = new hre.methodPrompts.CustomPrompt(
+            function([address], txOpts) {
+                console.log("tx opts:", txOpts);
+                return hre.common.transfer(address, txOpts);
+            }, {
+                onError: (e) => {
+                    console.error("There was an error while getting the balance");
+                    console.error(e);
+                },
+                onSuccess: (tx) => {
+                    console.log("The method ran successfully:", tx);
+                }
+            }, [{
+                name: "address",
+                description: "The address (or account index) to send native tokens to",
+                message: "What's the address (or account index) to send native tokens to?",
+                argumentType: "smart-address"
+            }], {
+                value: {onAbsent: "prompt"},
+                account: {onAbsent: "default"},
+                gasPrice: {onAbsent: "default"}
+            }
+        );
+        await method.invoke({address}, {account, gasPrice, value: amount}, nonInteractive);
     });
 
 /** @type import('hardhat/config').HardhatUserConfig */
