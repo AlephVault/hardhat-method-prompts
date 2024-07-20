@@ -94,8 +94,27 @@ task("sample-balance-of", "Invokes an ERC1155 balanceOf")
 
 task("balance-of", "Gets the native balance of for an account")
     .addPositionalParam("address", "The address (or index of account)")
-    .setAction(async ({address}, hre, runSuper) => {
-
+    .addFlag("nonInteractive", "Whether to throw an error when running")
+    .setAction(async ({address, nonInteractive}, hre, runSuper) => {
+        const method = new hre.methodPrompts.CustomPrompt(
+            function([address]) {
+                return hre.common.getBalance(address);
+            }, {
+                onError: (e) => {
+                    console.error("There was an error while getting the balance");
+                    console.error(e);
+                },
+                onSuccess: (tx) => {
+                    console.log("The method ran successfully:", tx);
+                }
+            }, [{
+                name: "address",
+                description: "The address (or account index) to query the balance for",
+                message: "What's the address (or account index) you want to query the balance for?",
+                argumentType: "smart-address"
+            }], {}
+        );
+        await method.invoke({address}, {}, nonInteractive);
     });
 
 /** @type import('hardhat/config').HardhatUserConfig */
