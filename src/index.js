@@ -44,7 +44,7 @@ class ContractMethodPrompt_ {
  * transaction options) and typically at most one operation
  * (transactional / state-changing).
  */
-class CustomPrompt {
+class CustomPrompt_ {
     constructor(hre, body, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
         this._hre = hre;
         this._method = {type: "custom", body, onError, onSuccess};
@@ -82,6 +82,12 @@ extendEnvironment((hre) => {
     class ContractMethodPrompt extends ContractMethodPrompt_ {
         constructor(methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
             super(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec);
+        }
+    }
+
+    class CustomPrompt extends CustomPrompt_ {
+        constructor(body, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
+            super(hre, body, {onError, onSuccess}, argumentsSpec, txOptionsSpec);
         }
     }
 
