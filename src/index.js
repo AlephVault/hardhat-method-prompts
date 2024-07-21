@@ -30,8 +30,9 @@ const txOptionTaskArgumentType = Object.fromEntries([
  * `onlyExplicitTxOptions` tells whether not to include
  * all the 7 options, but only the explicitly defined ones,
  * into the task declaration.
+ * @param callback The callback to execute.
  */
-function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, options) {
+function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, options, callback) {
     // 1. Parse the options.
     let {scope, onlyExplicitTxOptions} = options || {};
     let task_ = scope ? scope.task(name, description) : task(name, description);
@@ -41,10 +42,31 @@ function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, option
     let txOptionsMap = Object.fromEntries(txOptions.map((k) => [k, true]));
 
     // 3. Enumerating all the options (including nonInteractive).
-    let allDefaultOptions = [...txOptions, "nonInteractive"];
+    let allTxOptions = [...txOptions, "nonInteractive"];
 
     // 4. Validating the argument spacs.
     validateArgumentNames(argumentSpecs, txOptionsMap);
+
+    argumentSpecs.forEach(({name, description}) => {
+        task_ = task_.addOptionalParam(name, description);
+    });
+    allTxOptions.forEach((name) => {
+        task_ = txOptionTaskArgumentType[name] === "flag"
+            ? task_.addFlag(name, allTxOptionArgumentSpecs[name].description)
+            : task_.addOptionalParam(name, allTxOptionArgumentSpecs[name].description);
+    })
+    task_ = task_.addFlag(
+        "nonInteractive", "Whether to throw an error because the task became interactive"
+    );
+    return task_.setAction(async (args, hre, runSuper) => {
+        const givenArguments = Object.fromEntries(argumentSpecs.map(({name}) => {
+            return [name, args[name]];
+        }));
+        const givenTxOptions = Object.fromEntries(allTxOptions.map((name) => {
+            return [name, args[name]];
+        }));
+        await callback(givenArguments, givenTxOptions, args.nonInteractive);
+    });
 }
 
 function validateArgumentNames(argumentSpecs, txOptionsMap) {
