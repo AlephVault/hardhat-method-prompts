@@ -170,5 +170,5 @@ async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteracti
 }
 
 module.exports = {
-    processTxOptions
+    processTxOptions, argumentSpecs
 }

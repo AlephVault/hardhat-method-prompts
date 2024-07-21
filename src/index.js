@@ -1,5 +1,78 @@
 const {invoke} = require("./method-call");
-const {extendEnvironment} = require("hardhat/config");
+const {extendEnvironment, task} = require("hardhat/config");
+const {argumentSpecs: txOptionArgumentSpecs} = require("./tx-options");
+
+// There are ALL the tx options' arguments.
+const allTxOptionArgumentSpecs = {
+    ...txOptionArgumentSpecs,
+    "eip155": {
+        description: "Whether to use an eip155 signature for the transaction",
+        argumentType: "boolean"
+    }
+}
+
+// These mapping tells which of the options' arguments
+// are named arguments and which are flags.
+const txOptionTaskArgumentType = Object.fromEntries([
+    ...Object.keys(txOptionArgumentSpecs).map((k) => [k, "argument"]),
+    ["eip155", "flag"]
+]);
+
+/**
+ * Makes a task out of a set of specs.
+ * @param name The task
+ * @param description The task description.
+ * @param argumentSpecs The specs for the regular arguments.
+ * @param txOptionsArgumentSpecs The specs for the transaction
+ * options' arguments.
+ * @param options A {scope, onlyExplicitTxOptions} object,
+ * where `scope` is the scope for the task and
+ * `onlyExplicitTxOptions` tells whether not to include
+ * all the 7 options, but only the explicitly defined ones,
+ * into the task declaration.
+ */
+function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, options) {
+    // 1. Parse the options.
+    let {scope, onlyExplicitTxOptions} = options || {};
+    let task_ = scope ? scope.task(name, description) : task(name, description);
+
+    // 2. Enumerate the options to use for transactions.
+    let txOptions = Object.keys(!onlyExplicitTxOptions ? allTxOptionArgumentSpecs : txOptionsArgumentSpecs);
+    let txOptionsMap = Object.fromEntries(txOptions.map((k) => [k, true]));
+
+    // 3. Enumerating all the options (including nonInteractive).
+    let allDefaultOptions = [...txOptions, "nonInteractive"];
+
+    // 4. Validating the argument spacs.
+    validateArgumentNames(argumentSpecs, txOptionsMap);
+}
+
+function validateArgumentNames(argumentSpecs, txOptionsMap) {
+    const collectedArgumentNames = {};
+    argumentSpecs.forEach(({name}) => {
+        name = name || "";
+        if (!name) {
+            throw new Error("Empty/unset names on arguments are not valid when creating tasks");
+        }
+
+        if (name === "nonInteractive") {
+            throw new Error("nonInteractive is a reserved name when creating tasks.");
+        }
+
+        if (!/^[a-z][a-zA-Z0-9]$/.test(name)) {
+            throw new Error("Argument names must be camelCase when creating tasks");
+        }
+
+        if (collectedArgumentNames[name]) {
+            throw new Error("Argument names must not repeat when creating tasks");
+        }
+        collectedArgumentNames[name] = true;
+
+        if (txOptionsMap[name]) {
+            throw new Error(`The argument name \`${name}\` is reserved for an allowed transaction option argument`);
+        }
+    })
+}
 
 /**
  * This class is a helper to execute a method over a deployed
