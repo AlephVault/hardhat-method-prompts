@@ -86,7 +86,6 @@ extendEnvironment((hre) => {
 
     new hre.methodPrompts.CustomPrompt(
         function([address], txOpts) {
-            console.log("tx opts:", txOpts);
             return hre.common.transfer(address, txOpts);
         }, {
             onError: (e) => {
