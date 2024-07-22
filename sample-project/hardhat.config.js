@@ -39,7 +39,7 @@ extendEnvironment((hre) => {
             argumentType: "bytes"
         }], {
             account: {onAbsent: "default"},
-            gasPrice: {onAbsent: "prompt"}
+            gasPrice: {onAbsent: "default"}
         }
     ).asTask("sample-mint", "Invokes a sample mint");
 
@@ -63,7 +63,7 @@ extendEnvironment((hre) => {
             message: "What's the token you want to mint?",
             argumentType: "uint256"
         }], {}
-    ).asTask("sample-balance-of", "Invokes an ERC1155 balanceOf");
+    ).asTask("sample-balance-of", "Invokes an ERC1155 balanceOf", {onlyExplicitTxOptions: true});
 
     new hre.methodPrompts.CustomPrompt(
         function([address]) {
@@ -82,7 +82,7 @@ extendEnvironment((hre) => {
             message: "What's the address (or account index) you want to query the balance for?",
             argumentType: "smart-address"
         }], {}
-    ).asTask("balance-of", "Gets the native balance of for an account");
+    ).asTask("balance-of", "Gets the native balance of for an account", {onlyExplicitTxOptions: true});
 
     new hre.methodPrompts.CustomPrompt(
         function([address], txOpts) {
