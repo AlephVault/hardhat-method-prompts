@@ -112,7 +112,7 @@ function validateArgumentNames(argumentSpecs, txOptionsMap, extraOptionsMap) {
             throw new Error("nonInteractive is a reserved name when creating tasks.");
         }
 
-        if (!/^[a-z][a-zA-Z0-9]$/.test(name)) {
+        if (!/^[a-z][a-zA-Z0-9]+$/.test(name)) {
             throw new Error("Argument names must be camelCase when creating tasks");
         }
 
