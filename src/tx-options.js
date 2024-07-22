@@ -158,7 +158,7 @@ async function processTxOptions(hre, txOptionsSpec, givenTxOptions, nonInteracti
             }
             // Otherwise: the option will not be specified.
         } else if (onAbsent === "prompt") {
-            result[optionKey] = await processProvidedOrPrompt(hre, optionKey, nonInteractive);
+            result[optionKey] = await processProvidedOrPrompt(hre, optionKey, undefined, nonInteractive);
         } else {
             throw new Error(
                 `For transaction option ${optionKey} an invalid onAbsent setting was given: ${onAbsent}.` +
