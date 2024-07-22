@@ -25,39 +25,67 @@ const txOptionTaskArgumentType = Object.fromEntries([
  * @param argumentSpecs The specs for the regular arguments.
  * @param txOptionsArgumentSpecs The specs for the transaction
  * options' arguments.
- * @param options A {scope, onlyExplicitTxOptions} object,
- * where `scope` is the scope for the task and
- * `onlyExplicitTxOptions` tells whether not to include
- * all the 7 options, but only the explicitly defined ones,
- * into the task declaration.
+ * @param options A {scope, onlyExplicitTxOptions, extra} object,
+ * where `scope` is the scope for the task, `onlyExplicitTxOptions`
+ * tells whether not to include all the 7 transaction options, but
+ * only the explicitly defined ones, into the task declaration, and
+ * `extra` stands for an array of extra arguments to collect, given
+ * by their name and description. Each extra option is a pair like
+ * [name, description] so new arguments will be created out of them.
  * @param callback The callback to execute.
  */
-function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, options, callback) {
-    // 1. Parse the options.
-    let {scope, onlyExplicitTxOptions} = options || {};
+function asTask(
+    name, description, argumentSpecs, txOptionsArgumentSpecs,
+    options, callback
+) {
+    // 1. Parse the options and start the task.
+    let {scope, onlyExplicitTxOptions, extra} = options || {};
     let task_ = scope ? scope.task(name, description) : task(name, description);
 
     // 2. Enumerate the options to use for transactions.
-    let txOptions = Object.keys(!onlyExplicitTxOptions ? allTxOptionArgumentSpecs : txOptionsArgumentSpecs);
-    let txOptionsMap = Object.fromEntries(txOptions.map((k) => [k, true]));
+    let allTxOptions = Object.keys(!onlyExplicitTxOptions ? allTxOptionArgumentSpecs : txOptionsArgumentSpecs);
+    let allTxOptionsMap = Object.fromEntries(allTxOptions.map((k) => [k, true]));
+    if (allTxOptionsMap.nonInteractive) {
+        throw new Error("nonInteractive is a reserved name when creating tasks.");
+    }
 
-    // 3. Enumerating all the options (including nonInteractive).
-    let allTxOptions = [...txOptions, "nonInteractive"];
+    // 3. Enumerating the extra arguments.
+    let extraOptions = extra || [];
+    let extraOptionsMap = Object.fromEntries(extraOptions.map(([name, _]) => {
+        if (allTxOptions[name])
+            throw new Error(`The extra argument ${name} must not also be present among the transaction options`);
+        return [name, true];
+    }));
+    if (extraOptionsMap.nonInteractive) {
+        throw new Error("nonInteractive is a reserved name when creating tasks.");
+    }
 
     // 4. Validating the argument spacs.
-    validateArgumentNames(argumentSpecs, txOptionsMap);
+    validateArgumentNames(argumentSpecs, allTxOptionsMap, extraOptionsMap);
 
+    // 5. Installing arguments.
     argumentSpecs.forEach(({name, description}) => {
         task_ = task_.addOptionalParam(name, description);
     });
+
+    // 6. Installing transaction options.
     allTxOptions.forEach((name) => {
         task_ = txOptionTaskArgumentType[name] === "flag"
             ? task_.addFlag(name, allTxOptionArgumentSpecs[name].description)
             : task_.addOptionalParam(name, allTxOptionArgumentSpecs[name].description);
-    })
+    });
+
+    // 7. Installing the extra options.
+    extraOptions.forEach(([name, description]) => {
+        task_ = task_.addOptionalParam(name, description);
+    });
+
+    // 8. Installing nonInteractive.
     task_ = task_.addFlag(
         "nonInteractive", "Whether to throw an error because the task became interactive"
     );
+
+    // Return it with the new action.
     return task_.setAction(async (args, hre, runSuper) => {
         const givenArguments = Object.fromEntries(argumentSpecs.map(({name}) => {
             return [name, args[name]];
@@ -65,11 +93,14 @@ function asTask(name, description, argumentSpecs, txOptionsArgumentSpecs, option
         const givenTxOptions = Object.fromEntries(allTxOptions.map((name) => {
             return [name, args[name]];
         }));
-        await callback(givenArguments, givenTxOptions, args.nonInteractive);
+        const givenExtraOptions = Object.fromEntries(extraOptions.map(([name]) => {
+            return [name, args[name]];
+        }));
+        await callback(givenArguments, givenTxOptions, givenExtraOptions, args.nonInteractive);
     });
 }
 
-function validateArgumentNames(argumentSpecs, txOptionsMap) {
+function validateArgumentNames(argumentSpecs, txOptionsMap, extraOptionsMap) {
     const collectedArgumentNames = {};
     argumentSpecs.forEach(({name}) => {
         name = name || "";
@@ -93,7 +124,11 @@ function validateArgumentNames(argumentSpecs, txOptionsMap) {
         if (txOptionsMap[name]) {
             throw new Error(`The argument name \`${name}\` is reserved for an allowed transaction option argument`);
         }
-    })
+
+        if (extraOptionsMap[name]) {
+            throw new Error(`The argument name \`${name}\` is already present among the extra options`);
+        }
+    });
 }
 
 /**
@@ -131,6 +166,29 @@ class ContractMethodPrompt_ {
             this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
         );
     }
+
+    /**
+     * Creates a hardhat task out of this
+     * @param name The name of the task.
+     * @param description The description of the task.
+     * @param options A {scope, onlyExplicitTxOptions} object.
+     * The scope is a hardhat scope to put this task into, while
+     * the onlyExplicitTxOptions tells that, if true, only the
+     * explicitly declared transaction options are allowed in
+     * the task spec (otherwise, and by default, all of them are
+     * added as arguments).
+     * @returns {*} The task.
+     */
+    asTask(name, description, options) {
+        return asTask(
+            name, description, this._argumentsSpec, this._txOptionsSpec, {...options, extra: [
+                ["deploymentId", "An optional ignition deployment id"],
+                ["deployedContractId", "An optional ignition deployed contract id"],
+            ]}, (args, txOpts, {deploymentId, deployedContractId}, nonInteractive) => this.invoke(
+                deploymentId, deployedContractId, args, txOpts, nonInteractive
+            )
+        );
+    }
 }
 
 /**
@@ -159,6 +217,25 @@ class CustomPrompt_ {
         return invoke(
             this._hre, null, this._method, this._argumentsSpec, givenArguments || {},
             this._txOptionsSpec, givenTxOptions || {}, nonInteractive || false
+        );
+    }
+
+    /**
+     * Creates a hardhat task out of this
+     * @param name The name of the task.
+     * @param description The description of the task.
+     * @param options A {scope, onlyExplicitTxOptions} object.
+     * The scope is a hardhat scope to put this task into, while
+     * the onlyExplicitTxOptions tells that, if true, only the
+     * explicitly declared transaction options are allowed in
+     * the task spec (otherwise, and by default, all of them are
+     * added as arguments).
+     * @returns {*} The task.
+     */
+    asTask(name, description, options) {
+        return asTask(
+            name, description, this._argumentsSpec, this._txOptionsSpec, options,
+            (args, txOpts, _, nonInteractive) => this.invoke(args, txOpts, nonInteractive)
         );
     }
 }
