@@ -41,5 +41,5 @@ extendEnvironment((hre) => {
             account: {onAbsent: "default"},
             gasPrice: {onAbsent: "default"}
         }
-    ).asTask("transfer", "Transfers native balance to another account");
+    ).asTask("transfer", "Transfers native currency to another account");
 });
