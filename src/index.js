@@ -1,7 +1,3 @@
-require("./tasks/native");
-require("./tasks/erc20");
-require("./tasks/erc721");
-require("./tasks/erc1155");
 const {extendEnvironment, task} = require("hardhat/config");
 const {ContractMethodPrompt_, CustomPrompt_} = require("./core");
 
@@ -31,5 +27,10 @@ extendEnvironment((hre) => {
     // Registering the methodPrompts namespace.
     hre.methodPrompts = {ContractMethodPrompt, CustomPrompt};
 })
+
+require("./tasks/native");
+require("./tasks/erc20");
+require("./tasks/erc721");
+require("./tasks/erc1155");
 
 module.exports = {};
