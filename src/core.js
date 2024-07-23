@@ -1,6 +1,8 @@
 const {invoke} = require("./method-call");
 const {argumentSpecs: txOptionArgumentSpecs} = require("./tx-options");
-const {task} = require("hardhat/config");
+const {task, scope} = require("hardhat/config");
+
+const defaultScope = scope("invoke", "Tasks related to quickly prompted invocations");
 
 // There are ALL the tx options' arguments.
 const allTxOptionArgumentSpecs = {
@@ -32,6 +34,13 @@ const txOptionTaskArgumentType = Object.fromEntries([
  * `extra` stands for an array of extra arguments to collect, given
  * by their name and description. Each extra option is a pair like
  * [name, description] so new arguments will be created out of them.
+ * The scope is a hardhat scope to put this task into, while the
+ * onlyExplicitTxOptions tells that, if true, only the explicitly
+ * declared transaction options are allowed in the task spec
+ * (otherwise, and by default, all of them are added as arguments).
+ * If the scope is undefined, a default "invoke" scope will be used.
+ * If it is null, no scope will be used. Otherwise, the specified
+ * scope will be used (to define the task).
  * @param callback The callback to execute.
  */
 function asTask(
@@ -40,7 +49,17 @@ function asTask(
 ) {
     // 1. Parse the options and start the task.
     let {scope, onlyExplicitTxOptions, extra} = options || {};
-    let task_ = scope ? scope.task(name, description) : task(name, description);
+    let task_;
+    switch(scope) {
+        case null:
+            task_ = task(name, description);
+            break;
+        case undefined:
+            task_ = defaultScope.task(name, description);
+            break;
+        default:
+            task_ = scope.task(name, description);
+    }
 
     // 2. Enumerate the options to use for transactions.
     let allTxOptions = Object.keys(!onlyExplicitTxOptions ? allTxOptionArgumentSpecs : txOptionsArgumentSpecs);
@@ -229,7 +248,10 @@ class CustomPrompt_ {
      * the onlyExplicitTxOptions tells that, if true, only the
      * explicitly declared transaction options are allowed in
      * the task spec (otherwise, and by default, all of them are
-     * added as arguments).
+     * added as arguments). If the scope is undefined, a default
+     * "invoke" scope will be used. If it is null, no scope will
+     * be used. Otherwise, the specified scope will be used (to
+     * define the task).
      * @returns {*} The task.
      */
     asTask(name, description, options) {
