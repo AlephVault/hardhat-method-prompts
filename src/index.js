@@ -1,4 +1,7 @@
-const {invoke} = require("./method-call");
+require("./tasks/native");
+require("./tasks/erc20");
+require("./tasks/erc721");
+require("./tasks/erc1155");
 const {extendEnvironment, task} = require("hardhat/config");
 const {ContractMethodPrompt_, CustomPrompt_} = require("./core");
 
