@@ -37,7 +37,7 @@ extendEnvironment((hre) => {
             }
         }, [{
             name: "uint256",
-            description: "The ID to query the owner for",
+            description: "The ID of the token to query the owner for",
             message: "What's the token ID you want to know the owner for?",
             argumentType: "uint256"
         }], {}
