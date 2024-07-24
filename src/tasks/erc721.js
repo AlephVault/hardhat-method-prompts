@@ -142,8 +142,8 @@ extendEnvironment((hre) => {
         }, {
             name: "data",
             description: "The data for this operation",
-            message: "Data for this send (use direct 0x for no data, or a dumb empty text input)",
-            argumentType: "hashed"
+            message: "Data for this transfer (use 0x for no data)",
+            argumentType: "bytes"
         }], {}
     ).asTask("erc721:safe-transfer-from-with-data", "Invokes safeTransferFrom(address,address,uint256,bytes) on an ERC-721 contract");
     new hre.methodPrompts.ContractMethodPrompt(

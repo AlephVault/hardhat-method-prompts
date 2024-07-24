@@ -2,7 +2,6 @@
 //     address[] calldata accounts,
 //     uint256[] calldata ids
 // ) external view returns (uint256[] memory);
-// function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes calldata data) external;
 // function safeBatchTransferFrom(
 //     address from,
 //     address to,
@@ -35,7 +34,7 @@ extendEnvironment((hre) => {
         }], {}
     ).asTask("erc1155:balance-of", "Invokes balanceOf(address,uint256) on an ERC-1155 contract");
     new hre.methodPrompts.ContractMethodPrompt(
-        "call", "setApprovalForAll", {
+        "send", "setApprovalForAll", {
             onError: (e) => {
                 console.error("There was an error while running this method");
                 console.error(e);
@@ -76,4 +75,40 @@ extendEnvironment((hre) => {
             argumentType: "smart-address"
         }], {}
     ).asTask("erc1155:is-approved-for-all", "Invokes isApprovedForAll(address,address) on an ERC-1155 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "safeTransferFrom", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Operator changed successfully. Transaction is:", value);
+            }
+        }, [{
+            name: "from",
+            description: "The address to send the tokens from",
+            message: "Who will send the tokens? (it must be you or an address that approves you)",
+            argumentType: "smart-address"
+        }, {
+            name: "to",
+            description: "The address to send the tokens to",
+            message: "Who will receive the tokens?",
+            argumentType: "smart-address"
+        }, {
+            name: "id",
+            description: "The ID of the token to send",
+            message: "What's the ID of the token you want to send?",
+            argumentType: "uint256"
+        }, {
+            name: "amount",
+            description: "The amount of the token to send",
+            message: "What's the amount of the token you want to send?",
+            argumentType: "uint256"
+        }, {
+            name: "data",
+            description: "The data for this operation",
+            message: "Data for this transfer (use 0x for no data)",
+            argumentType: "bytes"
+        }], {}
+    ).asTask("erc1155:set-approval-for-all", "Invokes safeTransferFrom(address,address,uint256,uint256,bytes) on an ERC-1155 contract");
 });
