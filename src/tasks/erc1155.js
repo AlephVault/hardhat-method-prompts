@@ -2,7 +2,6 @@
 //     address[] calldata accounts,
 //     uint256[] calldata ids
 // ) external view returns (uint256[] memory);
-// function isApprovedForAll(address account, address operator) external view returns (bool);
 // function safeTransferFrom(address from, address to, uint256 id, uint256 value, bytes calldata data) external;
 // function safeBatchTransferFrom(
 //     address from,
@@ -56,4 +55,25 @@ extendEnvironment((hre) => {
             argumentType: "boolean"
         }], {}
     ).asTask("erc1155:set-approval-for-all", "Invokes setApprovalForAll(address,bool) on an ERC-1155 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "isApprovedForAll", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Approved:", value);
+            }
+        }, [{
+            name: "owner",
+            description: "The owner address",
+            message: "Which address will be the owner?",
+            argumentType: "smart-address"
+        }, {
+            name: "operator",
+            description: "The operator address",
+            message: "Which address will be the operator?",
+            argumentType: "smart-address"
+        }], {}
+    ).asTask("erc1155:is-approved-for-all", "Invokes isApprovedForAll(address,address) on an ERC-1155 contract");
 });
