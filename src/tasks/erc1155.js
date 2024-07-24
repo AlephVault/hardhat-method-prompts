@@ -34,6 +34,40 @@ extendEnvironment((hre) => {
         }], {}
     ).asTask("erc1155:balance-of", "Invokes balanceOf(address,uint256) on an ERC-1155 contract");
     new hre.methodPrompts.ContractMethodPrompt(
+        "call", "balanceOfBatch", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log(`Printing the balances (${value.length} elements):`);
+                if (!value.length) {
+                    console.log("No balances to print");
+                } else {
+                    value.forEach((v, i) => {
+                        console.log(`Balance #${i}:`, v);
+                    });
+                }
+            }
+        }, [hre.blueprints.arrayArgument({
+            message: "Tell the addresses to batch-query the balance for",
+            description: "The addresses to batch-query the balance for",
+            name: "addresses",
+            elements: {
+                argumentType: "smart-address",
+                message: "Address #${index}"
+            }
+        }), hre.blueprints.arrayArgument({
+            message: "Tell the token IDs to batch-query the balance for (same amount of addresses)",
+            description: "The token IDs to batch-query the balance for",
+            name: "tokenIds",
+            elements: {
+                argumentType: "smart-address",
+                message: "Token ID #${index}"
+            }
+        })], {}
+    ).asTask("erc1155:balance-of-batch", "Invokes balanceOfBatch(address[],uint256[]) on an ERC-1155 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
         "send", "setApprovalForAll", {
             onError: (e) => {
                 console.error("There was an error while running this method");
@@ -111,4 +145,6 @@ extendEnvironment((hre) => {
             argumentType: "bytes"
         }], {}
     ).asTask("erc1155:safe-transfer-from", "Invokes safeTransferFrom(address,address,uint256,uint256,bytes) on an ERC-1155 contract");
+    // TODO add balanceOfBatch.
+    // TODO add safeBatchTransferFrom.
 });
