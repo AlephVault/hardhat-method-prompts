@@ -1,4 +1,3 @@
-// function approve(address to, uint256 tokenId) external;
 // function setApprovalForAll(address operator, bool approved) external;
 // function getApproved(uint256 tokenId) external view returns (address operator);
 // function isApprovedForAll(address owner, address operator) external view returns (bool);
@@ -45,7 +44,28 @@ extendEnvironment((hre) => {
         }], {}
     ).asTask("erc721:owner-of", "Invokes ownerOf(uint256)(address) on an ERC-721 contract");
     new hre.methodPrompts.ContractMethodPrompt(
-        "send", "safeTransferFrom(address,address,uint256)", {
+        "send", "approve(address,uint256)", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (tx) => {
+                console.log("Token approved successfully. Transaction is:", tx);
+            }
+        }, [{
+            name: "to",
+            description: "The address to approve the token to",
+            message: "Who do you want to approve the token to?",
+            argumentType: "smart-address"
+        }, {
+            name: "tokenId",
+            description: "The ID of the token to approve",
+            message: "What's the ID of the token to approve?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc721:approve", "Invokes approve(address,uint256) on an ERC-721 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "transferFrom(address,address,uint256)", {
             onError: (e) => {
                 console.error("There was an error while running this method");
                 console.error(e);
