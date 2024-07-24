@@ -110,5 +110,5 @@ extendEnvironment((hre) => {
             message: "Data for this transfer (use 0x for no data)",
             argumentType: "bytes"
         }], {}
-    ).asTask("erc1155:set-approval-for-all", "Invokes safeTransferFrom(address,address,uint256,uint256,bytes) on an ERC-1155 contract");
+    ).asTask("erc1155:safe-transfer-from", "Invokes safeTransferFrom(address,address,uint256,uint256,bytes) on an ERC-1155 contract");
 });
