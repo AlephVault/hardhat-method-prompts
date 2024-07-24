@@ -29,7 +29,7 @@ extendEnvironment((hre) => {
                 console.error(e);
             },
             onSuccess: (tx) => {
-                console.log("The method ran successfully:", tx);
+                console.log("Tokens transferred successfully. Transaction is:", tx);
             }
         }, [{
             name: "address",
