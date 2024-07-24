@@ -72,4 +72,25 @@ extendEnvironment((hre) => {
             argumentType: "smart-address"
         }], {}
     ).asTask("erc20:allowance", "Invokes allowance(address,address)(uint256) on an ERC-20 contract", {onlyExplicitTxOptions: true});
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "approve", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (tx) => {
+                console.log("Tokens allowed successfully. Transaction is:", tx);
+            }
+        }, [{
+            name: "spender",
+            description: "The address to approve tokens to",
+            message: "Who do you want to approve tokens to?",
+            argumentType: "smart-address"
+        }, {
+            name: "amount",
+            description: "The amount to send",
+            message: "What's the amount to send?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc20:approve", "Invokes approve(address,uint256) on an ERC-20 contract");
 });
