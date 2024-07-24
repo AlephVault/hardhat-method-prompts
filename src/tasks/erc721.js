@@ -1,4 +1,3 @@
-// function setApprovalForAll(address operator, bool approved) external;
 // function getApproved(uint256 tokenId) external view returns (address operator);
 // function isApprovedForAll(address owner, address operator) external view returns (bool);
 const {extendEnvironment} = require("hardhat/config");
@@ -147,4 +146,25 @@ extendEnvironment((hre) => {
             argumentType: "hashed"
         }], {}
     ).asTask("erc721:safe-transfer-from-with-data", "Invokes safeTransferFrom(address,address,uint256,bytes) on an ERC-721 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "setApprovalForAll", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (tx) => {
+                console.log("Approval properly updated. Transaction is:", tx);
+            }
+        }, [{
+            name: "address",
+            description: "The address to set/clear the approval status",
+            message: "Who do you want to set/clear the approval status to?",
+            argumentType: "smart-address"
+        }, {
+            name: "set",
+            description: "The new status",
+            message: "Do you want to approve this address (y) or un-approve it (n)?",
+            argumentType: "boolean"
+        }], {}
+    ).asTask("erc721:set-approval-for-all", "Invokes setApprovalForAll(address,bool) on an ERC-721 contract");
 });
