@@ -1,5 +1,3 @@
-// function totalSupply() external view returns (uint256);
-// function balanceOf(address account) external view returns (uint256);
 // function transfer(address to, uint256 value) external returns (bool);
 // function allowance(address owner, address spender) external view returns (uint256);
 // function approve(address spender, uint256 value) external returns (bool);
@@ -34,4 +32,25 @@ extendEnvironment((hre) => {
             argumentType: "smart-address"
         }], {}
     ).asTask("erc20:balance-of", "Invokes balanceOf(address)(uint256) on an ERC-20 contract", {onlyExplicitTxOptions: true});
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "transfer", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (tx) => {
+                console.log("Tokens transferred successfully. Transaction is:", tx);
+            }
+        }, [{
+            name: "address",
+            description: "The address to send tokens to",
+            message: "Who do you want to send tokens to?",
+            argumentType: "smart-address"
+        }, {
+            name: "amount",
+            description: "The amount to send",
+            message: "What's the amount to send?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc20:transfer", "Invokes transfer(address,uint256) on an ERC-20 contract");
 });
