@@ -9,8 +9,8 @@ extendEnvironment((hre) => {
                 console.error("There was an error while getting the balance");
                 console.error(e);
             },
-            onSuccess: (tx) => {
-                console.log("The method ran successfully:", tx);
+            onSuccess: (value) => {
+                console.log("Balance:", value);
             }
         }, [{
             name: "address",
