@@ -18,4 +18,20 @@ extendEnvironment((hre) => {
             }
         }, [], {}
     ).asTask("erc20:total-supply", "Invokes totalSupply()(uint256) on an ERC-20 contract", {onlyExplicitTxOptions: true});
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "balanceOf", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Balance:", value);
+            }
+        }, [{
+            name: "address",
+            description: "The address to query the balance for",
+            message: "Who do you want to query the balance for?",
+            argumentType: "smart-address"
+        }], {}
+    ).asTask("erc20:balance-of", "Invokes balanceOf(address)(uint256) on an ERC-20 contract", {onlyExplicitTxOptions: true});
 });
