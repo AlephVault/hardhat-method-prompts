@@ -11,7 +11,7 @@ extendEnvironment((hre) => {
                 console.log("Total Supply:", value);
             }
         }, [], {}
-    ).asTask("erc20:total-supply", "Invokes totalSupply()(uint256) on an ERC-20 contract");
+    ).asTask("erc20:total-supply", "Invokes totalSupply() on an ERC-20 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "call", "balanceOf", {
             onError: (e) => {
@@ -27,7 +27,7 @@ extendEnvironment((hre) => {
             message: "Who do you want to query the balance for?",
             argumentType: "smart-address"
         }], {}
-    ).asTask("erc20:balance-of", "Invokes balanceOf(address)(uint256) on an ERC-20 contract");
+    ).asTask("erc20:balance-of", "Invokes balanceOf(address) on an ERC-20 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "send", "transfer", {
             onError: (e) => {
@@ -95,7 +95,7 @@ extendEnvironment((hre) => {
             message: "Who'll be the user to query the # of allowed tokens?",
             argumentType: "smart-address"
         }], {}
-    ).asTask("erc20:allowance", "Invokes allowance(address,address)(uint256) on an ERC-20 contract");
+    ).asTask("erc20:allowance", "Invokes allowance(address,address) on an ERC-20 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "send", "approve", {
             onError: (e) => {
