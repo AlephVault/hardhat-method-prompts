@@ -50,7 +50,7 @@ extendEnvironment((hre) => {
         }], {}
     ).asTask("erc20:transfer", "Invokes transfer(address,uint256) on an ERC-20 contract");
     new hre.methodPrompts.ContractMethodPrompt(
-        "send", "transfer", {
+        "send", "transferFrom", {
             onError: (e) => {
                 console.error("There was an error while running this method");
                 console.error(e);
