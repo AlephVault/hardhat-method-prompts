@@ -36,7 +36,7 @@ extendEnvironment((hre) => {
                 }
             }
         }, [{
-            name: "uint256",
+            name: "tokenId",
             description: "The ID of the token to query the owner for",
             message: "What's the token ID you want to know the owner for?",
             argumentType: "uint256"
@@ -163,7 +163,7 @@ extendEnvironment((hre) => {
         }, {
             name: "set",
             description: "The new status",
-            message: "Do you want to approve this address (y) or un-approve it (n)?",
+            message: "Do you want to approve this address (y) or un-approve it (n) as an operator?",
             argumentType: "boolean"
         }], {}
     ).asTask("erc721:set-approval-for-all", "Invokes setApprovalForAll(address,bool) on an ERC-721 contract");
@@ -184,9 +184,9 @@ extendEnvironment((hre) => {
                 }
             }
         }, [{
-            name: "uint256",
-            description: "The token to query the operator for",
-            message: "What's the token you want to query the operator for?",
+            name: "tokenId",
+            description: "The ID of the token to query the operator for",
+            message: "What's the ID of the token you want to query the operator for?",
             argumentType: "uint256"
         }], {}
     ).asTask("erc721:get-approved", "Invokes getApproved(uint256) on an ERC-721 contract");
