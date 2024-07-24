@@ -5,7 +5,7 @@ const argumentSpecs = {
         argumentType: "account"
     },
     "value": {
-        description: "The payment to attach to the method",
+        description: "The payment to attach to the invocation",
         message: "Choose the payment to attach",
         argumentType: "token-amount"
     },
