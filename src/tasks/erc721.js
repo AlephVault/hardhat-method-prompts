@@ -18,7 +18,7 @@ extendEnvironment((hre) => {
             message: "Who do you want to query the balance for?",
             argumentType: "smart-address"
         }], {}
-    ).asTask("erc721:balance-of", "Invokes balanceOf(address)(uint256) on an ERC-721 contract");
+    ).asTask("erc721:balance-of", "Invokes balanceOf(address) on an ERC-721 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "call", "ownerOf", {
             onError: (e) => {
@@ -36,12 +36,12 @@ extendEnvironment((hre) => {
                 }
             }
         }, [{
-            name: "address",
-            description: "The address to query the balance for",
-            message: "Who do you want to query the balance for?",
-            argumentType: "smart-address"
+            name: "uint256",
+            description: "The ID to query the owner for",
+            message: "What's the token ID you want to know the owner for?",
+            argumentType: "uint256"
         }], {}
-    ).asTask("erc721:owner-of", "Invokes ownerOf(uint256)(address) on an ERC-721 contract");
+    ).asTask("erc721:owner-of", "Invokes ownerOf(uint256) on an ERC-721 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "send", "approve(address,uint256)", {
             onError: (e) => {
@@ -167,4 +167,27 @@ extendEnvironment((hre) => {
             argumentType: "boolean"
         }], {}
     ).asTask("erc721:set-approval-for-all", "Invokes setApprovalForAll(address,bool) on an ERC-721 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "getApproved", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: async (value) => {
+                console.log("Operator:", value);
+                const signers = await hre.common.getSigners();
+                for(let index = 0; index < signers.length; index++) {
+                    let address = hre.common.getAddress(signers[index]);
+                    if (address.toLowerCase() === value.toLowerCase()) {
+                        console.log("This address belongs to the account with index:", index);
+                    }
+                }
+            }
+        }, [{
+            name: "uint256",
+            description: "The token to query the operator for",
+            message: "What's the token you want to query the operator for?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc721:get-approved", "Invokes getApproved(uint256) on an ERC-721 contract");
 });
