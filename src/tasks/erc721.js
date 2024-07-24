@@ -1,6 +1,3 @@
-// function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
-// function safeTransferFrom(address from, address to, uint256 tokenId) external;
-// function transferFrom(address from, address to, uint256 tokenId) external;
 // function approve(address to, uint256 tokenId) external;
 // function setApprovalForAll(address operator, bool approved) external;
 // function getApproved(uint256 tokenId) external view returns (address operator);
@@ -47,6 +44,32 @@ extendEnvironment((hre) => {
             argumentType: "smart-address"
         }], {}
     ).asTask("erc721:owner-of", "Invokes ownerOf(uint256)(address) on an ERC-721 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "safeTransferFrom(address,address,uint256)", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (tx) => {
+                console.log("Token transferred successfully. Transaction is:", tx);
+            }
+        }, [{
+            name: "from",
+            description: "The address to send the token from",
+            message: "Who do you want to send the token from? (must be you or must approve you)",
+            argumentType: "smart-address"
+        }, {
+            name: "to",
+            description: "The address to send the token to",
+            message: "Who do you want to send the token to?",
+            argumentType: "smart-address"
+        }, {
+            name: "tokenId",
+            description: "The ID of the token to send",
+            message: "What's the ID of the token to send?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc721:transfer-from", "Invokes transferFrom(address,address,uint256) on an ERC-721 contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "send", "safeTransferFrom(address,address,uint256)", {
             onError: (e) => {
