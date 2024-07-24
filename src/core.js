@@ -199,11 +199,14 @@ class ContractMethodPrompt_ {
      * @returns {*} The task.
      */
     asTask(name, description, options) {
+        options = options || {};
+        const isCall = this._method.type === "call";
         return asTask(
-            name, description, this._argumentsSpec, this._txOptionsSpec, {...options, extra: [
-                    ["deploymentId", "An optional ignition deployment id"],
-                    ["deployedContractId", "An optional ignition deployed contract id"],
-                ]}, (args, txOpts, {deploymentId, deployedContractId}, nonInteractive) => this.invoke(
+            name, description, this._argumentsSpec, isCall ? {} : this._txOptionsSpec, {...options,
+            onlyExplicitTxOptions: isCall ? true : options.onlyExplicitTxOptions, extra: [
+                ["deploymentId", "An optional ignition deployment id"],
+                ["deployedContractId", "An optional ignition deployed contract id"],
+            ]}, (args, txOpts, {deploymentId, deployedContractId}, nonInteractive) => this.invoke(
                 deploymentId, deployedContractId, args, txOpts, nonInteractive
             )
         );
