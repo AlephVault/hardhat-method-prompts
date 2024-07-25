@@ -1,6 +1,6 @@
 const { buildModule } = require("@nomicfoundation/hardhat-ignition/modules");
 
-module.exports = buildModule("MyOwnedERC1155Module", (m) => {
+module.exports = buildModule("MyOwnedERC721Module", (m) => {
   // You can pass parameters (e.g. "foo") to this module and attend
   // or capture them by using line like this one:
   //
@@ -20,7 +20,7 @@ module.exports = buildModule("MyOwnedERC1155Module", (m) => {
   // will be passed directly to the constructor.
 
   const contract = m.contract(
-    "MyOwnedERC1155", []
+    "MyOwnedERC721", []
   );
 
   // In this case, the result is a single object having a contract: key
