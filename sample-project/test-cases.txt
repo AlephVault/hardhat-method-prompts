@@ -1,0 +1,37 @@
+// Shell 1.
+npx hardhat node
+
+// Shell 2.
+npx hardhat ignition deploy ignition/modules/MyOwnedERC20Module.js --network localhost
+npx hardhat ignition deploy ignition/modules/MyOwnedERC721Module.js --network localhost
+npx hardhat ignition deploy ignition/modules/MyOwnedERC1155Module.js --network localhost
+npx hardhat console --network localhost
+
+// Inside Shell 2's `console` command:
+const addresses = [];
+addresses.push(await hre.common.getAddress(await hre.common.getSigner(0)));
+addresses.push(await hre.common.getAddress(await hre.common.getSigner(1)));
+addresses.push(await hre.common.getAddress(await hre.common.getSigner(2)));
+const contracts = {};
+contracts.erc20 = await hre.ignition.getDeployedContract("MyOwnedERC20Module#MyOwnedERC20");
+contracts.erc721 = await hre.ignition.getDeployedContract("MyOwnedERC721Module#MyOwnedERC721");
+contracts.erc1155 = await hre.ignition.getDeployedContract("MyOwnedERC1155Module#MyOwnedERC1155");
+await hre.common.send(contracts.erc20, "mint", [addresses[1], BigInt("20000000000000000000")]);
+await hre.common.send(contracts.erc721, "safeMint", [addresses[1], BigInt("1"), "0x"]);
+await hre.common.send(contracts.erc1155, "mint", [addresses[1], BigInt("1"), "10000000000000000000000", "0x"]);
+
+// Commands that were already tested:
+// (BEAR IN MIND THAT SOME OF THEM WILL HAVE THEIR OWN ERC-20-RELATED PRECONDITIONS
+// SO RUN THE COMMANDS IN ORDER).
+// Tools:
+npx hardhat invoke keccak256 --text "Hello World"
+// Native:
+npx hardhat invoke balance-of --address 0 --network localhost
+npx hardhat invoke transfer --account 0 --address 1 --value "1 ether" --network localhost
+// ERC-20:
+npx hardhat invoke erc20:approve --owner 1 --allowed 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:allowance --owner 1 --allowed 0 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:balance-of --address 1 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:total-supply --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:transfer --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 1
+npx hardhat invoke erc20:transfer-from --from 1 --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 0
