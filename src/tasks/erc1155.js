@@ -1,14 +1,3 @@
-// function balanceOfBatch(
-//     address[] calldata accounts,
-//     uint256[] calldata ids
-// ) external view returns (uint256[] memory);
-// function safeBatchTransferFrom(
-//     address from,
-//     address to,
-//     uint256[] calldata ids,
-//     uint256[] calldata values,
-//     bytes calldata data
-// ) external;
 const {extendEnvironment} = require("hardhat/config");
 
 extendEnvironment((hre) => {
@@ -145,6 +134,46 @@ extendEnvironment((hre) => {
             argumentType: "bytes"
         }], {}
     ).asTask("erc1155:safe-transfer-from", "Invokes safeTransferFrom(address,address,uint256,uint256,bytes) on an ERC-1155 contract");
-    // TODO add balanceOfBatch.
-    // TODO add safeBatchTransferFrom.
+    new hre.methodPrompts.ContractMethodPrompt(
+        "send", "safeBatchTransferFrom", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Operator changed successfully. Transaction is:", value);
+            }
+        }, [{
+            name: "from",
+            description: "The address to send the tokens from",
+            message: "Who will send the tokens? (it must be you or an address that approves you)",
+            argumentType: "smart-address"
+        }, {
+            name: "to",
+            description: "The address to send the tokens to",
+            message: "Who will receive the tokens?",
+            argumentType: "smart-address"
+        }, hre.blueprints.arrayArgument({
+            message: "Tell the IDs of the tokens to transfer",
+            description: "The IDs",
+            name: "ids",
+            elements: {
+                argumentType: "uint256",
+                message: "Token ID #${index}"
+            }
+        }), hre.blueprints.arrayArgument({
+            message: "Tell the amounts of the tokens to transfer",
+            description: "The amounts",
+            name: "amounts",
+            elements: {
+                argumentType: "uint256",
+                message: "Token amount #${index}"
+            }
+        }), {
+            name: "data",
+            description: "The data for this operation",
+            message: "Data for this transfer (use 0x for no data)",
+            argumentType: "bytes"
+        }], {}
+    ).asTask("erc1155:safe-batch-transfer-from", "Invokes safeBatchTransferFrom(address,address,uint256[],uint256[],bytes) on an ERC-1155 contract");
 });
