@@ -4,6 +4,28 @@ const {extendEnvironment} = require("hardhat/config");
 
 extendEnvironment((hre) => {
     new hre.methodPrompts.ContractMethodPrompt(
+        "call", "name", {
+            onError: (e) => {
+                console.error("There was an error while running this method (perhaps not an implementor of ERC721Metadata)");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Name:", value);
+            }
+        }, [], {}
+    ).asTask("erc721:name", "Invokes name() on an ERC-721 (implementing optional metadata) contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "symbol", {
+            onError: (e) => {
+                console.error("There was an error while running this method (perhaps not an implementor of ERC721Metadata)");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Symbol:", value);
+            }
+        }, [], {}
+    ).asTask("erc721:symbol", "Invokes name() on an ERC-721 (implementing optional metadata) contract");
+    new hre.methodPrompts.ContractMethodPrompt(
         "call", "balanceOf", {
             onError: (e) => {
                 console.error("There was an error while running this method");
