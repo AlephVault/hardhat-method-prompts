@@ -42,3 +42,6 @@ npx hardhat invoke erc721:get-approved --token-id 1 --deployed-contract-id "MyOw
 npx hardhat invoke erc721:owner-of --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost
 npx hardhat invoke erc721:safe-transfer-from --from 1 --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1
 npx hardhat invoke erc721:safe-transfer-from-with-data --from 0 --to 1 --data "0x" --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 0
+npx hardhat invoke erc721:set-approval-for-all --address 0 --set true --network localhost --account 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721"
+npx hardhat invoke erc721:transfer-from --from 1 --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1
+// ERC-1155
