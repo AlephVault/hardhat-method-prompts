@@ -57,3 +57,4 @@ npx hardhat invoke erc1155:set-approval-for-all --address 1 --approve y --networ
 npx hardhat invoke erc1155:is-approved-for-all --operator 1 --owner 0 --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155"
 npx hardhat invoke erc1155:safe-transfer-from --from 1 --to 0 --token-id 1 --amount 1000000000000000000 --data 0x --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --account 1
 npx hardhat invoke erc1155:safe-batch-transfer-from --from 1 --to 0 --token-ids "[1]" --amounts "[1000000000000000000]" --data 0x --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --account 1
+npx hardhat invoke erc1155:token-uri --token-id 1 --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155"
