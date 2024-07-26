@@ -228,10 +228,89 @@ The following tasks are already defined. Check them with `--help` to have a
 grasp on what they do:
 
 ```shell
+# Tools:
+npx hardhat invoke keccak256 --help
 # Native:
 npx hardhat invoke balance-of --help
 npx hardhat invoke transfer --help
-
-# ERC-20
+# ERC-20:
+npx hardhat invoke erc20:approve --help
+npx hardhat invoke erc20:allowance --help
+npx hardhat invoke erc20:balance-of --help
+npx hardhat invoke erc20:decimals --help
+npx hardhat invoke erc20:name --help
+npx hardhat invoke erc20:symbol --help
 npx hardhat invoke erc20:total-supply --help
+npx hardhat invoke erc20:transfer --help
+npx hardhat invoke erc20:transfer-from --help
+# ERC-721
+npx hardhat invoke erc721:approve --help
+npx hardhat invoke erc721:balance-of --help
+npx hardhat invoke erc721:get-approved --help
+npx hardhat invoke erc721:name --help
+npx hardhat invoke erc721:owner-of --help
+npx hardhat invoke erc721:safe-transfer-from --help
+npx hardhat invoke erc721:safe-transfer-from-with-data --help
+npx hardhat invoke erc721:set-approval-for-all --help
+npx hardhat invoke erc721:symbol --help
+npx hardhat invoke erc721:token-uri --help
+npx hardhat invoke erc721:transfer-from --help
+# ERC-1155
+npx hardhat invoke erc1155:balance-of --help
+npx hardhat invoke erc1155:balance-of-batch --help
+npx hardhat invoke erc1155:set-approval-for-all --help
+npx hardhat invoke erc1155:is-approved-for-all --help
+npx hardhat invoke erc1155:safe-transfer-from --help
+npx hardhat invoke erc1155:safe-batch-transfer-from --help
+npx hardhat invoke erc1155:token-uri --help
+```
+
+An example of the invocations. These assume:
+
+1. The futures' ids are valid on each --deployment-contract-id.
+2. The ERC-20 contract starts with more than 1e18 token amount on address for account `[1]`.
+3. The ERC-721 contract starts with token `1` for account `[1]`.
+4. The ERC-1155 contract starts with more than 1e18 token amount of token `1` on address for account `[1]`.
+5. The user executes the instructions _in strict order as presented_.
+6. They can be executed without any argument (save for --network), but the commands will become interactive
+   and prompt each argument to the user.
+
+The instructions are:
+
+```shell
+// Tools:
+npx hardhat invoke keccak256 --text "Hello World"
+// Native:
+npx hardhat invoke balance-of --address 0 --network localhost --non-interactive
+npx hardhat invoke transfer --account 0 --address 1 --value "1 ether" --network localhost --non-interactive
+// ERC-20:
+npx hardhat invoke erc20:approve --owner 1 --allowed 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:allowance --owner 1 --allowed 0 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:balance-of --address 1 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:decimals --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:name --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:symbol --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:total-supply --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --non-interactive
+npx hardhat invoke erc20:transfer --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 1 --non-interactive
+npx hardhat invoke erc20:transfer-from --from 1 --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 0 --non-interactive
+// ERC-721
+npx hardhat invoke erc721:approve --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1 --non-interactive
+npx hardhat invoke erc721:balance-of --address 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --non-interactive
+npx hardhat invoke erc721:get-approved --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --non-interactive
+npx hardhat invoke erc721:name --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --non-interactive
+npx hardhat invoke erc721:owner-of --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --non-interactive
+npx hardhat invoke erc721:safe-transfer-from --from 1 --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1 --non-interactive
+npx hardhat invoke erc721:safe-transfer-from-with-data --from 0 --to 1 --data "0x" --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 0 --non-interactive
+npx hardhat invoke erc721:set-approval-for-all --address 0 --set true --network localhost --account 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --non-interactive
+npx hardhat invoke erc721:symbol --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --non-interactive
+npx hardhat invoke erc721:token-uri --token-id 1 --network localhost --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --non-interactive
+npx hardhat invoke erc721:transfer-from --from 1 --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1 --non-interactive
+// ERC-1155
+npx hardhat invoke erc1155:balance-of --address 1 --token-id 1 --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --non-interactive
+npx hardhat invoke erc1155:balance-of-batch --addresses "[1]" --token-ids "[1]" --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --non-interactive
+npx hardhat invoke erc1155:set-approval-for-all --address 1 --approve y --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --non-interactive
+npx hardhat invoke erc1155:is-approved-for-all --operator 1 --owner 0 --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --non-interactive
+npx hardhat invoke erc1155:safe-transfer-from --from 1 --to 0 --token-id 1 --amount 1000000000000000000 --data 0x --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --account 1 --non-interactive
+npx hardhat invoke erc1155:safe-batch-transfer-from --from 1 --to 0 --token-ids "[1]" --amounts "[1000000000000000000]" --data 0x --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --account 1 --non-interactive
+npx hardhat invoke erc1155:token-uri --token-id 1 --network localhost --deployed-contract-id "MyOwnedERC1155Module#MyOwnedERC1155" --non-interactive
 ```
