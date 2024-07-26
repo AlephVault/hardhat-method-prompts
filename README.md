@@ -5,7 +5,7 @@ A hardhat plugin offering the possibility to quickly implement prompt-powered me
 Run this command to install it from NPM:
 
 ```shell
-npm install --save-dev hardhat-common-tools@^1.5.0 hardhat-enquirer-plus@^1.4.2 hardhat-blueprints@^1.2.2 hardhat-method-prompts@^1.1.0
+npm install --save-dev hardhat-common-tools@^1.5.0 hardhat-enquirer-plus@^1.4.2 hardhat-blueprints@^1.2.2 hardhat-method-prompts@^1.2.0
 ```
 
 # Usage
