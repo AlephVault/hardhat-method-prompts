@@ -78,7 +78,7 @@ contract MyOwnedERC721 is ERC721, Ownable {
         (string memory name, string memory description, string memory image) = _getTokenMetadata(tokenId);
 
         return string(abi.encodePacked("data:application/json;base64,", Base64.encode(abi.encodePacked(
-           '{"name:","', name, '", "description": "', description, '", "image": "', image, '"}'
+           '{"name": "', name, '", "description": "', description, '", "image": "', image, '"}'
         ))));
     }
 }
