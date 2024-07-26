@@ -35,3 +35,7 @@ npx hardhat invoke erc20:balance-of --address 1 --network localhost --deployed-c
 npx hardhat invoke erc20:total-supply --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
 npx hardhat invoke erc20:transfer --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 1
 npx hardhat invoke erc20:transfer-from --from 1 --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 0
+// ERC-721
+npx hardhat invoke erc721:approve --to 0 --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost --account 1
+npx hardhat invoke erc721:balance-of --address 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost
+npx hardhat invoke erc721:owner-of --token-id 1 --deployed-contract-id "MyOwnedERC721Module#MyOwnedERC721" --network localhost
