@@ -51,7 +51,7 @@ extendEnvironment((hre) => {
             description: "The token IDs to batch-query the balance for",
             name: "tokenIds",
             elements: {
-                argumentType: "smart-address",
+                argumentType: "uint256",
                 message: "Token ID #${index}"
             }
         })], {}
