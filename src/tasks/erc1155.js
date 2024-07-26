@@ -2,6 +2,22 @@ const {extendEnvironment} = require("hardhat/config");
 
 extendEnvironment((hre) => {
     new hre.methodPrompts.ContractMethodPrompt(
+        "call", "uri", {
+            onError: (e) => {
+                console.error("There was an error while running this method (perhaps not an implementor of ERC1155Metadata_URI)");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Token URI:", value);
+            }
+        }, [{
+            name: "tokenId",
+            description: "The ID of the token to query the URL for",
+            message: "What's the token ID you want to know the URL for?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc1155:token-uri", "Invokes uri(uint256) on an ERC-1155 (implementing optional metadata) contract");
+    new hre.methodPrompts.ContractMethodPrompt(
         "call", "balanceOf", {
             onError: (e) => {
                 console.error("There was an error while running this method");
