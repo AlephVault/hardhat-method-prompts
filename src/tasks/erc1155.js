@@ -170,16 +170,16 @@ extendEnvironment((hre) => {
             message: "Who will receive the tokens?",
             argumentType: "smart-address"
         }, hre.blueprints.arrayArgument({
-            message: "Tell the IDs of the tokens to transfer",
-            description: "The IDs",
+            message: "Tell the IDs of the tokens to send",
+            description: "The IDs of the tokens to send",
             name: "tokenIds",
             elements: {
                 argumentType: "uint256",
                 message: "Token ID #${index}"
             }
         }), hre.blueprints.arrayArgument({
-            message: "Tell the amounts of the tokens to transfer",
-            description: "The amounts",
+            message: "Tell the amounts of the tokens to send",
+            description: "The amounts of the tokens to send",
             name: "amounts",
             elements: {
                 argumentType: "uint256",
