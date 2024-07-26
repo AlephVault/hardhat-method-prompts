@@ -13,6 +13,39 @@ extendEnvironment((hre) => {
         }, [], {}
     ).asTask("erc20:total-supply", "Invokes totalSupply() on an ERC-20 contract");
     new hre.methodPrompts.ContractMethodPrompt(
+        "call", "name", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Name:", value);
+            }
+        }, [], {}
+    ).asTask("erc20:name", "Invokes name() on an ERC-20 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "symbol", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Symbol:", value);
+            }
+        }, [], {}
+    ).asTask("erc20:symbol", "Invokes symbol() on an ERC-20 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "decimals", {
+            onError: (e) => {
+                console.error("There was an error while running this method");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Decimals:", value);
+            }
+        }, [], {}
+    ).asTask("erc20:decimals", "Invokes decimals() on an ERC-20 contract");
+    new hre.methodPrompts.ContractMethodPrompt(
         "call", "balanceOf", {
             onError: (e) => {
                 console.error("There was an error while running this method");

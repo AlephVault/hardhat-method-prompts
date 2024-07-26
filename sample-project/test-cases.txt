@@ -32,6 +32,9 @@ npx hardhat invoke transfer --account 0 --address 1 --value "1 ether" --network 
 npx hardhat invoke erc20:approve --owner 1 --allowed 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
 npx hardhat invoke erc20:allowance --owner 1 --allowed 0 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
 npx hardhat invoke erc20:balance-of --address 1 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:decimals --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:name --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
+npx hardhat invoke erc20:symbol --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
 npx hardhat invoke erc20:total-supply --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20"
 npx hardhat invoke erc20:transfer --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 1
 npx hardhat invoke erc20:transfer-from --from 1 --to 0 --amount 1000000000000000000 --network localhost --deployed-contract-id "MyOwnedERC20Module#MyOwnedERC20" --account 0
