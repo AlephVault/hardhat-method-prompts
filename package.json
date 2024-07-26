@@ -25,7 +25,8 @@
     "hardhat": "^2.22.6",
     "hardhat-blueprints": "^1.2.2",
     "hardhat-common-tools": "^1.5.0",
-    "hardhat-enquirer-plus": "^1.4.2"
+    "hardhat-enquirer-plus": "^1.4.2",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "enquirer-plus": "^1.3.1",
