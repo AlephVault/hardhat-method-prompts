@@ -24,7 +24,23 @@ extendEnvironment((hre) => {
                 console.log("Symbol:", value);
             }
         }, [], {}
-    ).asTask("erc721:symbol", "Invokes name() on an ERC-721 (implementing optional metadata) contract");
+    ).asTask("erc721:symbol", "Invokes symbol() on an ERC-721 (implementing optional metadata) contract");
+    new hre.methodPrompts.ContractMethodPrompt(
+        "call", "tokenURI", {
+            onError: (e) => {
+                console.error("There was an error while running this method (perhaps not an implementor of ERC721Metadata)");
+                console.error(e);
+            },
+            onSuccess: (value) => {
+                console.log("Token URI:", value);
+            }
+        }, [{
+            name: "tokenId",
+            description: "The ID of the token to query the URL for",
+            message: "What's the token ID you want to know the URL for?",
+            argumentType: "uint256"
+        }], {}
+    ).asTask("erc721:token-uri", "Invokes tokenURI(uint256) on an ERC-721 (implementing optional metadata) contract");
     new hre.methodPrompts.ContractMethodPrompt(
         "call", "balanceOf", {
             onError: (e) => {
