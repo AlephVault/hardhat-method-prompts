@@ -155,9 +155,14 @@ function validateArgumentNames(argumentSpecs, txOptionsMap, extraOptionsMap) {
  * contract (via hardhat-ignition).
  */
 class ContractMethodPrompt_ {
-    constructor(hre, methodType, name, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
+    constructor(hre, methodType, method, {onError, onSuccess}, argumentsSpec, txOptionsSpec) {
         this._hre = hre;
-        this._method = {type: methodType, name, onError, onSuccess};
+
+        if (methodType === "custom") {
+            this._method = {type: "contract-custom", methodType, body: method, onError, onSuccess};
+        } else {
+            this._method = {type: methodType, name: method, onError, onSuccess};
+        }
         this._argumentsSpec = argumentsSpec || [];
         this._txOptionsSpec = txOptionsSpec || {};
     }

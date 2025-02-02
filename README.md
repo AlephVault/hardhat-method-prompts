@@ -111,6 +111,67 @@ await method.invoke(
 );
 ```
 
+There's also custom contract-bound invocations (which do not trigger a specific
+method but rather retrieve a user-specified contract). Take this one for example:
+
+```javascript
+const method = new hre.methodPrompts.ContractMethodPrompt(
+    "custom", function(contract, arguments, options) {
+        console.log(contract);
+        console.log(arguments);
+        console.log(options);
+        return "Foo";
+    }, {
+        onError: (e) => {
+            console.error("There was an error while computing the keccak256 hash");
+            console.error(e);
+        },
+        onSuccess: (tx) => {
+            console.log("Result:", tx);
+        }
+    }, [{
+        name: "foo",
+        description: "Some argument",
+        message: "Please set some argument",
+        argumentType: "string"
+    }], {
+        value: {onAbsent: "prompt"},
+        account: {onAbsent: "default"},
+        gasPrice: {onAbsent: "default"},
+        gas: {onAbsent: "default"},
+    }
+);
+```
+
+The invocation will look like this:
+
+```javascript
+await method.invoke(
+    // In my case, this is a valid ignition Module#Contract id.
+    // If you don't have a specific id, use undefined. It will
+    // be prompted to you.
+    //
+    // Also, feel free to use undfined for deploymentId if you
+    // are not interacting with a particular deployment. It will
+    // default to `chain-{yourChainId}`.
+    deploymentId, deployedContractId,
+    {foo}, {}, nonInteractive
+);
+```
+
+It will take `foo`, if defined, or it will prompt it. In this case, it will
+also prompt the `value`, and consider the `account`, `gas` and `gasPrice`
+to use their default values.
+
+Instead of invoking a contract's method, it will invoke the passed function
+which starts `function(contract, arguments, options) { ... }`, receiving the
+retrieved `contract`, the `arguments` and the transaction options.
+
+Therein, you can use tools like:
+
+- `hre.common.call(contract, "someMethod", [...args...])` to call a view method.
+- `hre.common.send(contract, "someMethod", [...args...], {...tx options...})` to call a view method.
+
 ## Details about transaction options
 The following options can be configured and provided as transaction options:
 
