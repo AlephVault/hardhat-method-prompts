@@ -123,7 +123,7 @@ const method = new hre.methodPrompts.ContractMethodPrompt(
         return "Foo";
     }, {
         onError: (e) => {
-            console.error("There was an error while computing the keccak256 hash");
+            console.error("There was an error while running this function");
             console.error(e);
         },
         onSuccess: (tx) => {
